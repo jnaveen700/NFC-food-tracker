@@ -1,0 +1,217 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Search, UserPlus, Upload, Users } from 'lucide-react';
+import { Student, MealRecord } from '../types';
+import { api } from '../services/api';
+import { Input } from '../components/UI/Input';
+import { Button } from '../components/UI/Button';
+import { StudentListItem } from '../components/Students/StudentListItem';
+import { StudentProfileSheet } from '../components/Students/StudentProfileSheet';
+import { AddStudentModal } from '../components/Students/AddStudentModal';
+import { ImportStudentsModal } from '../components/Students/ImportStudentsModal';
+
+interface StudentsPageProps {
+  initialCardIdForAdd?: string;
+  onClearInitialCardId?: () => void;
+}
+
+export const StudentsPage: React.FC<StudentsPageProps> = ({
+  initialCardIdForAdd,
+  onClearInitialCardId
+}) => {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState('ALL');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Sheet / Modal states
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [studentHistory, setStudentHistory] = useState<MealRecord[]>([]);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  
+  const [isAddModalOpen, setIsAddModalOpen] = useState(Boolean(initialCardIdForAdd));
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
+  const fetchStudents = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const list = await api.getStudents({
+        search: searchTerm,
+        department: selectedDepartment !== 'ALL' ? selectedDepartment : undefined
+      });
+      setStudents(list);
+    } catch (err) {
+      console.error('[Students Fetch Error]', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchTerm, selectedDepartment]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
+
+  useEffect(() => {
+    if (initialCardIdForAdd) {
+      setIsAddModalOpen(true);
+    }
+  }, [initialCardIdForAdd]);
+
+  const handleSelectStudent = async (student: Student) => {
+    setSelectedStudent(student);
+    setIsProfileOpen(true);
+    try {
+      const res = await api.getStudentDetail(student.id);
+      setStudentHistory(res.history);
+    } catch (err) {
+      console.error('[Student Detail Error]', err);
+    }
+  };
+
+  const handleSaveStudent = async (data: Partial<Student>) => {
+    if (editingStudent) {
+      await api.updateStudent(editingStudent.id, data);
+    } else {
+      await api.createStudent(data);
+    }
+    if (onClearInitialCardId) onClearInitialCardId();
+    fetchStudents();
+  };
+
+  const handleToggleActive = async (student: Student) => {
+    const updated = await api.updateStudent(student.id, { active: student.active ? 0 : 1 });
+    setSelectedStudent(updated);
+    fetchStudents();
+  };
+
+  const handleDeleteStudent = async (id: number) => {
+    await api.deleteStudent(id);
+    fetchStudents();
+  };
+
+  const departments = ['ALL', 'CSE', 'ECE', 'MECH', 'EEE', 'CIVIL', 'IT'];
+
+  return (
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] max-w-2xl mx-auto px-4 py-3 pb-24">
+      {/* Header & Primary Actions */}
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <h1 className="text-xl font-extrabold text-zinc-100">Student Roster</h1>
+          <p className="text-xs text-zinc-400 font-medium">
+            {students.length} registered students
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsImportModalOpen(true)}
+            icon={<Upload className="w-3.5 h-3.5" />}
+          >
+            Import
+          </Button>
+
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              setEditingStudent(null);
+              setIsAddModalOpen(true);
+            }}
+            icon={<UserPlus className="w-3.5 h-3.5" />}
+          >
+            Add Student
+          </Button>
+        </div>
+      </div>
+
+      {/* Search & Department Filters */}
+      <div className="space-y-2.5 mb-3">
+        <Input
+          placeholder="Search student, roll number, card ID..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          icon={<Search className="w-4 h-4 text-zinc-400" />}
+        />
+
+        {/* Department Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+          {departments.map((dept) => (
+            <button
+              key={dept}
+              onClick={() => setSelectedDepartment(dept)}
+              className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${
+                selectedDepartment === dept
+                  ? 'bg-brand-500 text-zinc-950 shadow-md shadow-brand-500/20'
+                  : 'bg-dark-card border border-zinc-800 text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              {dept}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Student Roster List */}
+      {isLoading ? (
+        <div className="space-y-2 py-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-16 bg-zinc-900/60 rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      ) : students.length === 0 ? (
+        <div className="p-8 bg-dark-card border border-zinc-800 rounded-3xl text-center my-6">
+          <Users className="w-10 h-10 text-zinc-600 mx-auto mb-2" />
+          <h3 className="text-sm font-bold text-zinc-300">No students found</h3>
+          <p className="text-xs text-zinc-500 mt-1">Try adjusting search term or department filter.</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {students.map((st) => (
+            <StudentListItem
+              key={st.id}
+              student={st}
+              onClick={handleSelectStudent}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Student Profile Sheet */}
+      <StudentProfileSheet
+        student={selectedStudent}
+        history={studentHistory}
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        onEditStudent={(st) => {
+          setIsProfileOpen(false);
+          setEditingStudent(st);
+          setIsAddModalOpen(true);
+        }}
+        onToggleActive={handleToggleActive}
+        onDeleteStudent={handleDeleteStudent}
+      />
+
+      {/* Add / Edit Student Modal */}
+      <AddStudentModal
+        isOpen={isAddModalOpen}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingStudent(null);
+          if (onClearInitialCardId) onClearInitialCardId();
+        }}
+        onSave={handleSaveStudent}
+        editStudent={editingStudent}
+        initialCardId={initialCardIdForAdd}
+      />
+
+      {/* Import Students Modal */}
+      <ImportStudentsModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={(list) => api.importStudents(list)}
+      />
+    </div>
+  );
+};

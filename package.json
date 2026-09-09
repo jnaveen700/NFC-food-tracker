@@ -1,0 +1,12 @@
+{
+  "name": "nfc-hostel-mess-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "cmd /c \"cd server && npm install\" && cmd /c \"cd client && npm install\"",
+    "dev:server": "cmd /c \"cd server && npm run dev\"",
+    "dev:client": "cmd /c \"cd client && npm run dev\"",
+    "db:reseed": "cmd /c \"cd server && npm run db:reseed\"",
+    "build": "cmd /c \"cd server && npm run build\" && cmd /c \"cd client && npm run build\""
+  }
+}
