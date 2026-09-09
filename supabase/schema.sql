@@ -56,31 +56,31 @@ ALTER TABLE meal_records ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
--- Allow service_role full access (used by Netlify Functions)
+-- Allow API access (supports both service_role key and anon/publishable key)
 DO $$
 BEGIN
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'students' AND policyname = 'service_role_all_students'
+    SELECT 1 FROM pg_policies WHERE tablename = 'students' AND policyname = 'api_all_students'
   ) THEN
-    CREATE POLICY service_role_all_students ON students FOR ALL TO service_role USING (true) WITH CHECK (true);
+    CREATE POLICY api_all_students ON students FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
   END IF;
 
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'meal_records' AND policyname = 'service_role_all_meal_records'
+    SELECT 1 FROM pg_policies WHERE tablename = 'meal_records' AND policyname = 'api_all_meal_records'
   ) THEN
-    CREATE POLICY service_role_all_meal_records ON meal_records FOR ALL TO service_role USING (true) WITH CHECK (true);
+    CREATE POLICY api_all_meal_records ON meal_records FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
   END IF;
 
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'settings' AND policyname = 'service_role_all_settings'
+    SELECT 1 FROM pg_policies WHERE tablename = 'settings' AND policyname = 'api_all_settings'
   ) THEN
-    CREATE POLICY service_role_all_settings ON settings FOR ALL TO service_role USING (true) WITH CHECK (true);
+    CREATE POLICY api_all_settings ON settings FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
   END IF;
 
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'users' AND policyname = 'service_role_all_users'
+    SELECT 1 FROM pg_policies WHERE tablename = 'users' AND policyname = 'api_all_users'
   ) THEN
-    CREATE POLICY service_role_all_users ON users FOR ALL TO service_role USING (true) WITH CHECK (true);
+    CREATE POLICY api_all_users ON users FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
   END IF;
 END $$;
 
