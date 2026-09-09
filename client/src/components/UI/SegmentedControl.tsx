@@ -21,7 +21,7 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
   size = 'md'
 }) => {
   return (
-    <div className="bg-dark-elevated p-1 rounded-2xl border border-zinc-800 flex items-center gap-1 overflow-x-auto no-scrollbar">
+    <div className="bg-slate-100 p-1 rounded-2xl border border-slate-200 flex items-center gap-1 overflow-x-auto no-scrollbar">
       {options.map((opt) => {
         const isSelected = value === opt.value;
         return (
@@ -30,7 +30,7 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
             onClick={() => onChange(opt.value)}
             className={`
               relative flex-1 min-w-[70px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-xl transition-colors duration-150 flex items-center justify-center gap-1.5 select-none
-              ${isSelected ? 'text-zinc-950 font-bold' : 'text-zinc-400 hover:text-zinc-200'}
+              ${isSelected ? 'text-white font-bold' : 'text-slate-600 hover:text-slate-900'}
             `}
           >
             {isSelected && (
@@ -44,7 +44,7 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
             {opt.count !== undefined && (
               <span
                 className={`relative z-10 px-1.5 py-0.2 rounded-full text-[10px] ${
-                  isSelected ? 'bg-zinc-950/20 text-zinc-950 font-extrabold' : 'bg-zinc-800 text-zinc-400'
+                  isSelected ? 'bg-white/25 text-white font-extrabold' : 'bg-slate-200 text-slate-700'
                 }`}
               >
                 {opt.count}

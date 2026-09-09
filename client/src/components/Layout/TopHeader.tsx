@@ -12,22 +12,25 @@ interface TopHeaderProps {
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
   activeMeal,
-  messName = 'Hostel Mess & Event',
+  messName = 'NEXUS Food Token Tracker',
   isOnline = true,
   onOpenMealSelector,
   onOpenDemoScanner
 }) => {
+  // Format user-facing token label
+  const tokenLabel = activeMeal === 'Snack 1' ? 'Snack Token' : activeMeal === 'Dinner' ? 'Full Meal Token' : `${activeMeal} Token`;
+
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-slate-200 px-4 py-3 pt-safe shadow-sm">
       <div className="max-w-2xl mx-auto flex items-center justify-between gap-2">
-        {/* Left: Mess Logo & Title */}
+        {/* Left: NEXUS Logo & Title */}
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-brand-100 border border-brand-200 flex items-center justify-center text-brand-700 shrink-0 md:hidden">
-            <Utensils className="w-4 h-4" />
+          <div className="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center font-black text-sm shrink-0 md:hidden shadow-sm">
+            N
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 truncate">
+              <h2 className="text-xs font-black uppercase tracking-wider text-slate-900 truncate">
                 {messName}
               </h2>
               {isOnline ? (
@@ -42,8 +45,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 </span>
               )}
             </div>
-            <div className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-              <span>{activeMeal}</span>
+            <div className="text-xs font-bold text-brand-700 flex items-center gap-1.5">
+              <span>{tokenLabel}</span>
             </div>
           </div>
         </div>

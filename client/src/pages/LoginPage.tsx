@@ -33,12 +33,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       <div className="w-full max-w-sm space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-3xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center mx-auto shadow-lg shadow-brand-500/10">
-            <UtensilsCrossed className="w-7 h-7" />
+          <div className="w-14 h-14 rounded-3xl bg-brand-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-500/20 font-black text-2xl">
+            N
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Hostel Mess NFC</h1>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">NEXUS</h1>
           <p className="text-xs text-slate-500 font-medium">
-            Food Attendance & Meal Tracking System
+            Fest Participant & Pass Management System
           </p>
         </div>
 

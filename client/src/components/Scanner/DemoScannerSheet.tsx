@@ -52,7 +52,7 @@ export const DemoScannerSheet: React.FC<DemoScannerSheetProps> = ({
         {/* Quick select cards */}
         <div>
           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
-            Select Student Card to Tap
+            Select Participant Card to Tap
           </label>
           <div className="grid grid-cols-1 gap-2">
             {demoCards.map((card) => (

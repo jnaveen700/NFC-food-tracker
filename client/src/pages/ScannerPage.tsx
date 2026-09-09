@@ -34,15 +34,20 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
 
   const { playSuccess, playDuplicate, playUnknown } = useScanAudio();
 
-  // Sessions Rule:
-  // Day 1: Snack 1 + Dinner (Snack + Meal)
-  // Day 2: Snack 1 (1 time snack only)
-  // Day 3: Snack 1 (1 time snack only)
-  const getSessionsForDay = (day: EventDay): MealType[] => {
+  // NEXUS Event Sessions Rule:
+  // Day 1: Snack + Meal (mapped internally to Snack 1 & Dinner for backend safety)
+  // Day 2: Snack (mapped to Snack 1)
+  // Day 3: Snack (mapped to Snack 1)
+  const getSessionsForDay = (day: EventDay): { label: string; mealType: MealType }[] => {
     if (day === 'Day 1') {
-      return ['Snack 1', 'Dinner'];
+      return [
+        { label: 'Snack', mealType: 'Snack 1' },
+        { label: 'Meal', mealType: 'Dinner' }
+      ];
     }
-    return ['Snack 1'];
+    return [
+      { label: 'Snack', mealType: 'Snack 1' }
+    ];
   };
 
   const currentAvailableSessions = getSessionsForDay(activeDay);
@@ -50,8 +55,9 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
   const handleSelectDay = (day: EventDay) => {
     setActiveDay(day);
     const validSessions = getSessionsForDay(day);
-    if (!validSessions.includes(activeMeal)) {
-      onChangeActiveMeal(validSessions[0]);
+    const currentValid = validSessions.some((s) => s.mealType === activeMeal);
+    if (!currentValid) {
+      onChangeActiveMeal(validSessions[0].mealType);
     }
   };
 
@@ -130,7 +136,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <span className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
             <Calendar className="w-4 h-4 text-brand-600" />
-            3-Day Event Schedule
+            3-Day Food Token Schedule
           </span>
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
             {days.map((d) => (
@@ -152,20 +158,20 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
         {/* Sessions for selected day */}
         <div>
           <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
-            {activeDay === 'Day 1' ? 'Day 1 Sessions (Snack + Meal)' : `${activeDay} Session (1 Time Snack Only)`}
+            {activeDay === 'Day 1' ? 'Day 1 Tokens (1 Snack + 1 Full Meal)' : `${activeDay} Token (1 Snack)`}
           </div>
           <div className="flex items-center gap-2">
-            {currentAvailableSessions.map((m) => (
+            {currentAvailableSessions.map((s) => (
               <button
-                key={m}
-                onClick={() => onChangeActiveMeal(m)}
+                key={s.mealType}
+                onClick={() => onChangeActiveMeal(s.mealType)}
                 className={`flex-1 py-2 px-3 rounded-xl text-xs font-extrabold transition-all shadow-sm ${
-                  activeMeal === m
+                  activeMeal === s.mealType
                     ? 'bg-brand-500 text-white shadow-brand-500/20'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                {m === 'Snack 1' ? 'Snack' : m}
+                {s.label === 'Meal' ? 'Full Meal Token' : 'Snack Token'}
               </button>
             ))}
           </div>
@@ -208,6 +214,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
       {dashboardData && (
         <DailySummaryCard
           mealType={activeMeal}
+          sessionLabel={`${activeDay} • ${activeMeal === 'Dinner' ? 'Full Meal Token' : 'Snack Token'}`}
           count={dashboardData.activeMealCount}
           total={dashboardData.totalStudents}
           percentage={dashboardData.activeMealPercentage}

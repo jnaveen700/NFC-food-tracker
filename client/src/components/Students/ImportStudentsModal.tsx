@@ -54,7 +54,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
   };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Import Student Roster">
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Import Participants (JSON)">
       <div className="space-y-4">
         {feedback && (
           <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 font-bold flex items-center gap-2">
@@ -69,8 +69,8 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
           </div>
         )}
 
-        <div className="text-xs text-zinc-400">
-          Paste student objects in JSON format to bulk register students into SQLite database:
+        <div className="text-xs text-slate-600 font-medium">
+          Paste participant objects in JSON format to bulk register fest participants:
         </div>
 
         <div className="relative">
@@ -78,7 +78,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
             value={jsonText}
             onChange={(e) => setJsonText(e.target.value)}
             rows={8}
-            className="w-full bg-dark-bg border border-zinc-800 rounded-xl p-3 font-mono text-xs text-zinc-200 focus:border-brand-500 focus:outline-none"
+            className="w-full bg-white border border-slate-300 rounded-xl p-3 font-mono text-xs text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none shadow-sm"
           />
         </div>
 
@@ -90,7 +90,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
           onClick={handleImport}
           icon={<Upload className="w-4 h-4" />}
         >
-          Import Students Array
+          Import Participants Array
         </Button>
       </div>
     </BottomSheet>

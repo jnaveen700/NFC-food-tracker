@@ -36,10 +36,9 @@ export const HistoryPage: React.FC = () => {
   }, [fetchHistory]);
 
   const mealFilterOptions = [
-    { value: 'ALL', label: 'All Meals' },
-    { value: 'Breakfast', label: 'Breakfast' },
-    { value: 'Lunch', label: 'Lunch' },
-    { value: 'Dinner', label: 'Dinner' },
+    { value: 'ALL', label: 'All Sessions' },
+    { value: 'Snack 1', label: 'Snack' },
+    { value: 'Dinner', label: 'Meal' }
   ];
 
   return (
@@ -47,9 +46,9 @@ export const HistoryPage: React.FC = () => {
       {/* Top Header & Export */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h1 className="text-xl font-extrabold text-zinc-100">Meal History</h1>
-          <p className="text-xs text-zinc-400 font-medium">
-            Showing {records.length} of {totalCount} records
+          <h1 className="text-xl font-extrabold text-slate-900">Food Token History</h1>
+          <p className="text-xs text-slate-500 font-medium">
+            Showing {records.length} of {totalCount} food token redemptions
           </p>
         </div>
 
@@ -57,9 +56,9 @@ export const HistoryPage: React.FC = () => {
           href={api.getExportCsvUrl(dateFilter)}
           target="_blank"
           rel="noopener noreferrer"
-          className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-200 flex items-center gap-1.5 transition-colors"
+          className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5 transition-colors shadow-sm"
         >
-          <Download className="w-3.5 h-3.5 text-brand-400" />
+          <Download className="w-3.5 h-3.5 text-brand-600" />
           Export CSV
         </a>
       </div>
@@ -67,10 +66,10 @@ export const HistoryPage: React.FC = () => {
       {/* Date & Search Controls */}
       <div className="space-y-3 mb-3">
         <Input
-          placeholder="Search student, roll no, card..."
+          placeholder="Search participant, roll no, card..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          icon={<Search className="w-4 h-4 text-zinc-400" />}
+          icon={<Search className="w-4 h-4 text-slate-400" />}
         />
 
         <div className="flex items-center gap-2">
@@ -81,11 +80,11 @@ export const HistoryPage: React.FC = () => {
               onChange={(val) => setMealFilter(val)}
             />
           </div>
-          <div className="flex items-center gap-1 bg-dark-card border border-zinc-800 rounded-2xl p-1 shrink-0">
+          <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-2xl p-1 shrink-0">
             <button
               onClick={() => setDateFilter('today')}
               className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-colors ${
-                dateFilter === 'today' ? 'bg-brand-500 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
+                dateFilter === 'today' ? 'bg-brand-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Today
@@ -93,10 +92,10 @@ export const HistoryPage: React.FC = () => {
             <button
               onClick={() => setDateFilter('ALL')}
               className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-colors ${
-                dateFilter === 'ALL' ? 'bg-brand-500 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
+                dateFilter === 'ALL' ? 'bg-brand-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              All Time
+              All Days
             </button>
           </div>
         </div>
@@ -106,46 +105,49 @@ export const HistoryPage: React.FC = () => {
       {isLoading ? (
         <div className="space-y-2 py-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-16 bg-zinc-900/60 rounded-2xl animate-pulse" />
+            <div key={i} className="h-16 bg-slate-200/60 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : records.length === 0 ? (
-        <div className="p-8 bg-dark-card border border-zinc-800 rounded-3xl text-center my-6">
-          <Calendar className="w-10 h-10 text-zinc-600 mx-auto mb-2" />
-          <h3 className="text-sm font-bold text-zinc-300">No meal records found</h3>
-          <p className="text-xs text-zinc-500 mt-1">Try clearing your filters or search terms.</p>
+        <div className="p-8 bg-white border border-slate-200 rounded-3xl text-center my-6 shadow-sm">
+          <Calendar className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+          <h3 className="text-sm font-bold text-slate-800">No collection records found</h3>
+          <p className="text-xs text-slate-500 mt-1">Try clearing your session filter or search term.</p>
         </div>
       ) : (
         <div className="space-y-2">
-          {records.map((r) => (
-            <div
-              key={r.id}
-              className="p-3 bg-dark-card border border-zinc-800/80 rounded-2xl flex items-center justify-between gap-3 shadow-sm hover:border-zinc-700 transition-colors"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
-                  <Check className="w-4 h-4 stroke-[3]" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-xs font-bold text-zinc-100 truncate">{r.student_name}</div>
-                  <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-2">
-                    <span>{r.roll_number}</span>
-                    <span>•</span>
-                    <span>{r.department}</span>
+          {records.map((r) => {
+            const tokenLabel = r.meal_type === 'Dinner' ? 'Full Meal Token' : 'Snack Token';
+            return (
+              <div
+                key={r.id}
+                className="p-3 bg-white border border-slate-200 rounded-2xl flex items-center justify-between gap-3 shadow-sm hover:border-slate-300 transition-colors"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
+                    <Check className="w-4 h-4 stroke-[3]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs sm:text-sm font-extrabold text-slate-900 truncate">{r.student_name}</div>
+                    <div className="text-[11px] font-mono text-slate-600 flex items-center gap-2 mt-0.5">
+                      <span className="font-semibold text-slate-800">{r.roll_number}</span>
+                      <span className="text-slate-400">•</span>
+                      <span className="text-slate-600 font-medium">{r.department}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="text-right shrink-0">
-                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 block mb-0.5">
-                  {r.meal_type}
-                </span>
-                <span className="text-[11px] text-zinc-400 font-mono">
-                  {r.formatted_time || r.scanned_at}
-                </span>
+                <div className="text-right shrink-0">
+                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 block mb-0.5">
+                    {tokenLabel}
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    {r.formatted_time || r.scanned_at}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

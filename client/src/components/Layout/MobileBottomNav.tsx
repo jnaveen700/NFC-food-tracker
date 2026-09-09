@@ -11,10 +11,10 @@ interface MobileBottomNavProps {
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, onSelectTab }) => {
   const tabs = [
-    { id: 'scanner' as TabType, label: 'Scan', icon: Scan, isPrimary: true },
+    { id: 'scanner' as TabType, label: 'Tokens', icon: Scan, isPrimary: true },
     { id: 'history' as TabType, label: 'History', icon: Clock },
-    { id: 'students' as TabType, label: 'Students', icon: Users },
-    { id: 'dashboard' as TabType, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'students' as TabType, label: 'Participants', icon: Users },
+    { id: 'dashboard' as TabType, label: 'Analytics', icon: LayoutDashboard },
     { id: 'settings' as TabType, label: 'Settings', icon: Settings },
   ];
 

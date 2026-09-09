@@ -17,7 +17,7 @@ export const handler: Handler = async (event) => {
     const activeMeal = await getCurrentMealType();
     const supabase = getSupabaseClient();
 
-    // 1. Total active students
+    // 1. Total active participants
     const { count: totalActiveCount, error: countErr } = await supabase
       .from('students')
       .select('*', { count: 'exact', head: true })
@@ -25,17 +25,40 @@ export const handler: Handler = async (event) => {
 
     const totalStudents = totalActiveCount || 0;
 
-    // 2. Fetch meal records for today to calculate session metrics
-    const { data: todayRecords, error: recordsErr } = await supabase
-      .from('meal_records')
-      .select('id, student_id, meal_type, meal_date, scanned_at')
-      .eq('meal_date', today);
+    // 2. Dates for 3-day fest schedule:
+    // Day 3 = today, Day 2 = yesterday, Day 1 = 2 days ago (or custom date param)
+    const now = new Date();
+    const d3Date = getTodayDateString(now);
+    const d2Obj = new Date(now);
+    d2Obj.setDate(d2Obj.getDate() - 1);
+    const d2Date = getTodayDateString(d2Obj);
+    const d1Obj = new Date(now);
+    d1Obj.setDate(d1Obj.getDate() - 2);
+    const d1Date = getTodayDateString(d1Obj);
 
-    const allTodayRecords = todayRecords || [];
+    // Fetch meal records for past days and today to calculate 3-day metrics
+    const { data: allFestRecords } = await supabase
+      .from('meal_records')
+      .select('id, student_id, meal_type, meal_date, scanned_at');
+
+    const allRecordsList = allFestRecords || [];
+    const allTodayRecords = allRecordsList.filter((r) => r.meal_date === today);
 
     const getMealCount = (mType: string) => {
       return allTodayRecords.filter((r) => r.meal_type === mType).length;
     };
+
+    // Calculate real counts for Day 1, Day 2, Day 3
+    // Day 1: Snack 1 + Dinner (Snack + Meal) on d1Date (or today if records created today)
+    const day1Records = allRecordsList.filter((r) => r.meal_date === d1Date);
+    const day2Records = allRecordsList.filter((r) => r.meal_date === d2Date);
+    const day3Records = allRecordsList.filter((r) => r.meal_date === d3Date);
+
+    // If fest records are logged today for testing/live, fallback to today's records so live scans immediately reflect
+    const d1SnackCount = day1Records.filter((r) => r.meal_type === 'Snack 1').length || allTodayRecords.filter((r) => r.meal_type === 'Snack 1').length;
+    const d1MealCount = day1Records.filter((r) => r.meal_type === 'Dinner').length || allTodayRecords.filter((r) => r.meal_type === 'Dinner').length;
+    const d2SnackCount = day2Records.filter((r) => r.meal_type === 'Snack 1').length || allTodayRecords.filter((r) => r.meal_type === 'Snack 1').length;
+    const d3SnackCount = day3Records.filter((r) => r.meal_type === 'Snack 1').length || allTodayRecords.filter((r) => r.meal_type === 'Snack 1').length;
 
     const bCount = getMealCount('Breakfast');
     const lCount = getMealCount('Lunch');
@@ -129,6 +152,11 @@ export const handler: Handler = async (event) => {
         snack1: s1Count,
         snack2: s2Count,
         snack3: s3Count
+      },
+      dayCollections: {
+        day1: { snack: d1SnackCount, meal: d1MealCount },
+        day2: { snack: d2SnackCount },
+        day3: { snack: d3SnackCount }
       },
       recentScans: formattedRecentScans,
       missingStudents,

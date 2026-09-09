@@ -93,12 +93,12 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)] max-w-2xl mx-auto px-4 py-3 pb-24">
-      {/* Header & Primary Actions */}
-      <div className="flex items-center justify-between mb-3">
+      {/* Top Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-zinc-100">Student Roster</h1>
-          <p className="text-xs text-zinc-400 font-medium">
-            {students.length} registered students
+          <h1 className="text-xl font-extrabold text-slate-900">Participant Roster</h1>
+          <p className="text-xs text-slate-500 font-medium">
+            {students.length} registered fest participants
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
             variant="outline"
             size="sm"
             onClick={() => setIsImportModalOpen(true)}
-            icon={<Upload className="w-3.5 h-3.5" />}
+            icon={<Upload className="w-4 h-4 text-brand-600" />}
           >
             Import
           </Button>
@@ -119,20 +119,20 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
               setEditingStudent(null);
               setIsAddModalOpen(true);
             }}
-            icon={<UserPlus className="w-3.5 h-3.5" />}
+            icon={<UserPlus className="w-4 h-4" />}
           >
-            Add Student
+            Add Participant
           </Button>
         </div>
       </div>
 
-      {/* Search & Department Filters */}
-      <div className="space-y-2.5 mb-3">
+      {/* Search & Dept Filters */}
+      <div className="space-y-3">
         <Input
-          placeholder="Search student, roll number, card ID..."
+          placeholder="Search by name, roll no, NFC card..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          icon={<Search className="w-4 h-4 text-zinc-400" />}
+          icon={<Search className="w-4 h-4 text-slate-400" />}
         />
 
         {/* Department Pills */}
@@ -143,8 +143,8 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
               onClick={() => setSelectedDepartment(dept)}
               className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${
                 selectedDepartment === dept
-                  ? 'bg-brand-500 text-zinc-950 shadow-md shadow-brand-500/20'
-                  : 'bg-dark-card border border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
               {dept}
@@ -157,14 +157,14 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       {isLoading ? (
         <div className="space-y-2 py-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-16 bg-zinc-900/60 rounded-2xl animate-pulse" />
+            <div key={i} className="h-16 bg-slate-200/60 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : students.length === 0 ? (
-        <div className="p-8 bg-dark-card border border-zinc-800 rounded-3xl text-center my-6">
-          <Users className="w-10 h-10 text-zinc-600 mx-auto mb-2" />
-          <h3 className="text-sm font-bold text-zinc-300">No students found</h3>
-          <p className="text-xs text-zinc-500 mt-1">Try adjusting search term or department filter.</p>
+        <div className="p-8 bg-white border border-slate-200 rounded-3xl text-center my-6 shadow-sm">
+          <Users className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+          <h3 className="text-sm font-bold text-slate-800">No participants found</h3>
+          <p className="text-xs text-slate-500 mt-1">Try clearing your search term or department filter.</p>
         </div>
       ) : (
         <div className="space-y-2">

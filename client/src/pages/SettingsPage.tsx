@@ -73,31 +73,31 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)] max-w-2xl mx-auto px-4 py-3 pb-24 space-y-4">
       <div>
-        <h1 className="text-xl font-extrabold text-zinc-100">App Settings</h1>
-        <p className="text-xs text-zinc-400 font-medium">
-          Configure meal time windows & NFC hardware diagnostics
+        <h1 className="text-xl font-extrabold text-slate-900">NEXUS Settings</h1>
+        <p className="text-xs text-slate-500 font-medium">
+          Configure fest collection windows & NFC hardware diagnostics
         </p>
       </div>
 
       {successMsg && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 font-bold flex items-center gap-2">
+        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-bold flex items-center gap-2">
           <CheckCircle className="w-4 h-4" />
           {successMsg}
         </div>
       )}
 
       {/* Web NFC Hardware Diagnostic */}
-      <div className="p-4 bg-dark-card border border-zinc-800 rounded-3xl">
+      <div className="p-4 bg-white border border-slate-200 rounded-3xl shadow-sm">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-1.5">
-            <Radio className="w-4 h-4 text-brand-400" />
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+            <Radio className="w-4 h-4 text-brand-600" />
             NFC Scanner Hardware
           </h3>
           <Badge variant={isNFCSupported ? 'success' : 'warning'}>
             {isNFCSupported ? 'Web NFC Ready' : 'Demo Mode Fallback'}
           </Badge>
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-slate-600">
           {isNFCSupported
             ? 'Web NFC API is available on this Android device. Card taps will register directly.'
             : 'Web NFC is not supported in this browser. Use the "Use Demo Scanner" option to simulate card reads.'}
@@ -105,14 +105,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
       </div>
 
       {/* Meal Hours Config Form */}
-      <form onSubmit={handleSaveSettings} className="p-4 bg-dark-card border border-zinc-800 rounded-3xl space-y-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-1.5 border-b border-zinc-800 pb-2">
-          <Clock className="w-4 h-4 text-brand-400" />
-          Configurable Meal Schedule
+      <form onSubmit={handleSaveSettings} className="p-4 bg-white border border-slate-200 rounded-3xl space-y-4 shadow-sm">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5 border-b border-slate-200 pb-2">
+          <Clock className="w-4 h-4 text-brand-600" />
+          Configurable Collection Schedule
         </h3>
 
         <Input
-          label="Hostel / Mess Title"
+          label="Fest Event Title"
           value={messName}
           onChange={(e) => setMessName(e.target.value)}
         />
@@ -120,13 +120,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
         {/* Breakfast window */}
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Breakfast Start"
+            label="Morning Snack Start"
             type="time"
             value={breakfastStart}
             onChange={(e) => setBreakfastStart(e.target.value)}
           />
           <Input
-            label="Breakfast End"
+            label="Morning Snack End"
             type="time"
             value={breakfastEnd}
             onChange={(e) => setBreakfastEnd(e.target.value)}
@@ -136,13 +136,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
         {/* Lunch window */}
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Lunch Start"
+            label="Afternoon Window Start"
             type="time"
             value={lunchStart}
             onChange={(e) => setLunchStart(e.target.value)}
           />
           <Input
-            label="Lunch End"
+            label="Afternoon Window End"
             type="time"
             value={lunchEnd}
             onChange={(e) => setLunchEnd(e.target.value)}
@@ -152,13 +152,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
         {/* Dinner window */}
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Dinner Start"
+            label="Evening Meal Start"
             type="time"
             value={dinnerStart}
             onChange={(e) => setDinnerStart(e.target.value)}
           />
           <Input
-            label="Dinner End"
+            label="Evening Meal End"
             type="time"
             value={dinnerEnd}
             onChange={(e) => setDinnerEnd(e.target.value)}
@@ -173,7 +173,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
           isLoading={isSaving}
           icon={<Save className="w-4 h-4" />}
         >
-          Save Meal Schedule
+          Save Collection Schedule
         </Button>
       </form>
 
@@ -185,7 +185,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
               Reset & Reseed Sample Data
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Clears current meal records & restores sample student roster and history.
+              Restores 20 sample NEXUS participants and demo collection records.
             </p>
           </div>
           <Button
@@ -209,15 +209,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
       {/* Staff Session */}
       <div className="p-4 bg-white border border-slate-200 rounded-3xl flex items-center justify-between shadow-sm">
         <div>
-          <div className="text-xs font-bold text-zinc-100">{user?.name || 'Mess Staff Member'}</div>
-          <div className="text-[11px] text-zinc-400 font-mono">{user?.email || 'admin@mess.edu'}</div>
+          <div className="text-xs font-bold text-slate-900">{user?.name || 'NEXUS Fest Volunteer'}</div>
+          <div className="text-[11px] text-slate-500 font-mono">{user?.email || 'admin@mess.edu'}</div>
         </div>
 
         <Button
           variant="ghost"
           size="sm"
           onClick={onLogout}
-          icon={<LogOut className="w-4 h-4 text-rose-400" />}
+          icon={<LogOut className="w-4 h-4 text-rose-500" />}
         >
           Sign Out
         </Button>

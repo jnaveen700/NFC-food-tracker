@@ -75,69 +75,66 @@ export const AddStudentModal: React.FC<AddStudentModalProps> = ({
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title={editStudent ? 'Edit Student Details' : 'Add New Student'}
+      title={editStudent ? 'Edit Participant Details' : 'Register New Participant'}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-400 font-semibold">
+          <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 font-semibold">
             {error}
           </div>
         )}
 
         <Input
-          label="Full Name *"
+          label="Full Name"
+          placeholder="e.g. Karthikeya R"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Rahul Kumar"
           required
-          icon={<User className="w-4 h-4 text-zinc-400" />}
+          icon={<User className="w-4 h-4 text-slate-400" />}
         />
 
         <Input
-          label="Roll Number *"
+          label="Roll Number / Participant ID"
+          placeholder="e.g. 23AK1A3218"
           value={rollNumber}
           onChange={(e) => setRollNumber(e.target.value)}
-          placeholder="e.g. 23CSE1001"
           required
-          icon={<BookOpen className="w-4 h-4 text-zinc-400" />}
+          icon={<BookOpen className="w-4 h-4 text-slate-400" />}
         />
 
         <Input
-          label="NFC Card Identifier *"
+          label="NFC Pass Card ID"
+          placeholder="e.g. NFC-23CSE1001"
           value={cardId}
           onChange={(e) => setCardId(e.target.value)}
-          placeholder="e.g. NFC-23CSE1001"
           required
-          icon={<CreditCard className="w-4 h-4 text-brand-400" />}
+          icon={<CreditCard className="w-4 h-4 text-slate-400" />}
         />
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-              Department
-            </label>
+          <div>
+            <label className="text-xs font-bold text-slate-700 block mb-1.5">Department</label>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="h-12 bg-dark-card border border-zinc-800 rounded-xl text-xs sm:text-sm text-zinc-100 px-3 focus:border-brand-500 focus:outline-none"
+              className="w-full h-12 px-3 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-brand-500 focus:outline-none"
             >
               <option value="CSE">CSE</option>
+              <option value="CSD">CSD</option>
               <option value="ECE">ECE</option>
-              <option value="MECH">MECH</option>
               <option value="EEE">EEE</option>
-              <option value="CIVIL">CIVIL</option>
               <option value="IT">IT</option>
+              <option value="MECH">MECH</option>
+              <option value="CIVIL">CIVIL</option>
             </select>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-              Year
-            </label>
+          <div>
+            <label className="text-xs font-bold text-slate-700 block mb-1.5">Year</label>
             <select
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
-              className="h-12 bg-dark-card border border-zinc-800 rounded-xl text-xs sm:text-sm text-zinc-100 px-3 focus:border-brand-500 focus:outline-none"
+              className="w-full h-12 px-3 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-brand-500 focus:outline-none"
             >
               <option value={1}>1st Year</option>
               <option value={2}>2nd Year</option>
@@ -147,16 +144,18 @@ export const AddStudentModal: React.FC<AddStudentModalProps> = ({
           </div>
         </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          fullWidth
-          size="lg"
-          isLoading={isLoading}
-          icon={<Save className="w-4 h-4" />}
-        >
-          {editStudent ? 'Save Changes' : 'Create Student'}
-        </Button>
+        <div className="pt-2">
+          <Button
+            type="submit"
+            variant="primary"
+            fullWidth
+            size="lg"
+            isLoading={isLoading}
+            icon={<Save className="w-4 h-4" />}
+          >
+            {editStudent ? 'Save Changes' : 'Register Participant'}
+          </Button>
+        </div>
       </form>
     </BottomSheet>
   );

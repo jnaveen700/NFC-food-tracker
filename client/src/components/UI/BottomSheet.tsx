@@ -47,20 +47,20 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className={`relative z-10 w-full max-w-lg bg-dark-card border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col ${maxHeight} overflow-hidden`}
+            className={`relative z-10 w-full max-w-lg bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col ${maxHeight} overflow-hidden`}
           >
             {/* Drag Pill */}
             <div className="flex justify-center pt-3 pb-1 sm:hidden">
-              <div className="w-12 h-1.5 bg-zinc-700/60 rounded-full" />
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full" />
             </div>
 
             {/* Header */}
             {title && (
-              <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800/80 shrink-0">
-                <h3 className="text-lg font-bold text-zinc-100">{title}</h3>
+              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
+                <h3 className="text-lg font-bold text-slate-900">{title}</h3>
                 <button
                   onClick={onClose}
-                  className="w-9 h-9 rounded-full bg-zinc-800/60 hover:bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-colors"
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-colors"
                   aria-label="Close"
                 >
                   <X className="w-5 h-5" />

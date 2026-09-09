@@ -18,7 +18,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
   return (
     <div className="w-full flex flex-col gap-1">
-      <div className={`w-full ${height} bg-zinc-800/80 rounded-full overflow-hidden`}>
+      <div className={`w-full ${height} bg-slate-200 rounded-full overflow-hidden`}>
         <motion.div
           className={`h-full ${color} rounded-full`}
           initial={{ width: 0 }}
@@ -27,7 +27,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         />
       </div>
       {showLabel && (
-        <div className="flex justify-between items-center text-[11px] font-semibold text-zinc-400">
+        <div className="flex justify-between items-center text-[11px] font-semibold text-slate-600">
           <span>Progress</span>
           <span>{clamped}%</span>
         </div>

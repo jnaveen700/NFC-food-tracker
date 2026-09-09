@@ -41,10 +41,15 @@ export interface ScanResponse {
   error?: string;
 }
 
+export interface DayCollections {
+  snack: { count: number; percentage: number };
+  meal?: { count: number; percentage: number };
+}
+
 export interface DashboardData {
   date: string;
   activeMeal: MealType;
-  activeDay: EventDay;
+  activeDay?: EventDay;
   totalStudents: number;
   activeMealCount: number;
   activeMealPercentage: number;
@@ -59,6 +64,11 @@ export interface DashboardData {
   recentScans: MealRecord[];
   missingStudents: Student[];
   departmentBreakdown: { department: string; count: number }[];
+  dayCollections?: {
+    day1: { snack: number; meal: number };
+    day2: { snack: number };
+    day3: { snack: number };
+  };
 }
 
 export interface AppSettings {

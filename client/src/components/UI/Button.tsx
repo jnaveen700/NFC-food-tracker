@@ -22,11 +22,11 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none select-none focus:outline-none focus:ring-2 focus:ring-brand-500/50';
 
   const variantStyles = {
-    primary: 'bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold shadow-lg shadow-brand-500/20 border border-brand-400/30',
-    secondary: 'bg-dark-elevated hover:bg-zinc-800 text-zinc-100 border border-zinc-800',
-    outline: 'border border-zinc-700 hover:border-zinc-500 text-zinc-200 bg-transparent',
+    primary: 'bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-lg shadow-brand-500/20 border border-brand-600/30',
+    secondary: 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 shadow-sm',
+    outline: 'border border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 bg-white shadow-sm',
     danger: 'bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/20',
-    ghost: 'bg-transparent hover:bg-zinc-800/60 text-zinc-300'
+    ghost: 'bg-transparent hover:bg-slate-100 text-slate-700'
   };
 
   const sizeStyles = {

@@ -89,20 +89,20 @@ export const ScanResultOverlay: React.FC<ScanResultOverlayProps> = ({
               ? 'text-amber-700'
               : 'text-slate-900'
           }`}>
-            {isSuccess && '✓ Food Recorded'}
-            {isDuplicate && '❌ ALREADY ATE!'}
-            {isUnknown && 'Card Not Recognized'}
+            {isSuccess && '✓ Food Token Redeemed'}
+            {isDuplicate && '❌ TOKEN ALREADY REDEEMED!'}
+            {isUnknown && 'Participant Not Found'}
             {isError && (scanResult.message || 'Scan Failed')}
           </h2>
 
           {/* Subtitle notice for Already Ate */}
           {isDuplicate && (
             <div className="mt-1 font-bold text-xs text-rose-600 uppercase tracking-wider">
-              Duplicate Attendance Detected
+              This participant has already redeemed their token for this session
             </div>
           )}
 
-          {/* Student Info */}
+          {/* Participant Info */}
           {scanResult.student ? (
             <div className={`mt-3 py-3 px-4 rounded-2xl border text-left ${
               isDuplicate
@@ -117,20 +117,20 @@ export const ScanResultOverlay: React.FC<ScanResultOverlayProps> = ({
           ) : isUnknown ? (
             <div className="mt-3 py-2 text-xs text-slate-600">
               Card ID: <code className="px-2 py-1 bg-slate-100 rounded font-mono text-slate-800 font-bold">{scanResult.cardId}</code>
-              <p className="mt-2 text-slate-500">This NFC card is not linked to any active student.</p>
+              <p className="mt-2 text-slate-500">This NFC card is not linked to any registered participant.</p>
             </div>
           ) : null}
 
-          {/* Meal Details */}
+          {/* Token Details */}
           {(isSuccess || isDuplicate) && (
             <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-semibold text-slate-600">
               <span className={`uppercase tracking-wider font-extrabold ${isDuplicate ? 'text-rose-600' : 'text-emerald-700'}`}>
-                {scanResult.mealType}
+                {scanResult.mealType === 'Dinner' ? 'Full Meal Token' : 'Snack Token'}
               </span>
               <span>
                 {isDuplicate
-                  ? `Recorded at ${scanResult.formattedTime || 'earlier today'}`
-                  : `Today • ${scanResult.formattedTime}`}
+                  ? `Redeemed at ${scanResult.formattedTime || 'earlier today'}`
+                  : `Redeemed • ${scanResult.formattedTime}`}
               </span>
             </div>
           )}
@@ -168,7 +168,7 @@ export const ScanResultOverlay: React.FC<ScanResultOverlayProps> = ({
                   }}
                   icon={<UserPlus className="w-4 h-4" />}
                 >
-                  Add Student
+                  Add Participant
                 </Button>
               </div>
             )}

@@ -11,14 +11,14 @@ interface DesktopSidebarProps {
 export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   activeTab,
   onSelectTab,
-  messName = 'Hostel Mess & Event'
+  messName = 'Food Token Tracker'
 }) => {
   const menuItems = [
-    { id: 'scanner' as TabType, label: 'Scanner', icon: Scan, badge: 'NFC' },
-    { id: 'history' as TabType, label: 'Meal History', icon: Clock },
-    { id: 'students' as TabType, label: 'Student Roster', icon: Users },
-    { id: 'dashboard' as TabType, label: 'Analytics Dashboard', icon: LayoutDashboard },
-    { id: 'settings' as TabType, label: 'Settings & Config', icon: Settings },
+    { id: 'scanner' as TabType, label: 'Token Scanner', icon: Scan, badge: 'NFC' },
+    { id: 'history' as TabType, label: 'Token History', icon: Clock },
+    { id: 'students' as TabType, label: 'Participants', icon: Users },
+    { id: 'dashboard' as TabType, label: 'Token Analytics', icon: LayoutDashboard },
+    { id: 'settings' as TabType, label: 'Settings', icon: Settings },
   ];
 
   return (
@@ -26,12 +26,12 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       <div>
         {/* Brand Header */}
         <div className="flex items-center gap-3 px-3 py-3 mb-6 border-b border-slate-100">
-          <div className="w-10 h-10 rounded-2xl bg-brand-100 border border-brand-200 flex items-center justify-center text-brand-700">
-            <UtensilsCrossed className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-2xl bg-brand-500 text-white flex items-center justify-center font-black text-base shadow-md shadow-brand-500/20 shrink-0">
+            N
           </div>
           <div>
-            <h1 className="font-extrabold text-sm text-slate-900 leading-tight">Mess & Event NFC</h1>
-            <p className="text-[11px] text-slate-500 font-medium truncate max-w-[140px]">{messName}</p>
+            <h1 className="font-extrabold text-sm text-slate-900 leading-tight">NEXUS</h1>
+            <p className="text-[11px] text-slate-500 font-medium truncate max-w-[140px]">Food Token Tracker</p>
           </div>
         </div>
 
