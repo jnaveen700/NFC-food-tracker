@@ -27,12 +27,19 @@ export const handler: Handler = async (event) => {
       .eq('email', email.trim().toLowerCase())
       .maybeSingle();
 
-    if (error || !user) {
+    if (error) {
+      console.error('[Auth Login] Supabase error during user lookup:', error.message, error.code);
+      return jsonResponse(401, { error: 'Invalid credentials' });
+    }
+
+    if (!user) {
+      console.warn(`[Auth Login] No user found for email: ${email.trim().toLowerCase()}`);
       return jsonResponse(401, { error: 'Invalid credentials' });
     }
 
     const isMatch = bcrypt.compareSync(password, user.password_hash);
     if (!isMatch) {
+      console.warn(`[Auth Login] Password mismatch for user: ${email.trim().toLowerCase()}`);
       return jsonResponse(401, { error: 'Invalid credentials' });
     }
 

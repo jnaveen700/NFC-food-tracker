@@ -21,35 +21,35 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
-        <label htmlFor={inputId} className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+        <label htmlFor={inputId} className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
           {label}
         </label>
       )}
       <div className="relative flex items-center">
         {icon && (
-          <div className="absolute left-3.5 text-zinc-400 pointer-events-none">
+          <div className="absolute left-3.5 text-slate-400 pointer-events-none">
             {icon}
           </div>
         )}
         <input
           id={inputId}
           className={`
-            w-full h-12 bg-dark-card border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-500
-            focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/50 transition-all
+            w-full h-12 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400
+            focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all shadow-sm
             ${icon ? 'pl-10' : 'pl-3.5'}
             ${rightElement ? 'pr-12' : 'pr-3.5'}
-            ${error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/50' : ''}
+            ${error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20' : ''}
             ${className}
           `}
           {...props}
         />
         {rightElement && (
-          <div className="absolute right-3.5 text-zinc-400 flex items-center">
+          <div className="absolute right-3.5 text-slate-400 flex items-center">
             {rightElement}
           </div>
         )}
       </div>
-      {error && <span className="text-xs text-rose-400 font-medium">{error}</span>}
+      {error && <span className="text-xs text-rose-500 font-medium">{error}</span>}
     </div>
   );
 };

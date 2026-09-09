@@ -59,29 +59,21 @@ ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 -- Allow API access (supports both service_role key and anon/publishable key)
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'students' AND policyname = 'api_all_students'
-  ) THEN
-    CREATE POLICY api_all_students ON students FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
-  END IF;
+  DROP POLICY IF EXISTS service_role_all_students ON students;
+  DROP POLICY IF EXISTS api_all_students ON students;
+  CREATE POLICY api_all_students ON students FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
 
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'meal_records' AND policyname = 'api_all_meal_records'
-  ) THEN
-    CREATE POLICY api_all_meal_records ON meal_records FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
-  END IF;
+  DROP POLICY IF EXISTS service_role_all_meal_records ON meal_records;
+  DROP POLICY IF EXISTS api_all_meal_records ON meal_records;
+  CREATE POLICY api_all_meal_records ON meal_records FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
 
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'settings' AND policyname = 'api_all_settings'
-  ) THEN
-    CREATE POLICY api_all_settings ON settings FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
-  END IF;
+  DROP POLICY IF EXISTS service_role_all_settings ON settings;
+  DROP POLICY IF EXISTS api_all_settings ON settings;
+  CREATE POLICY api_all_settings ON settings FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
 
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'users' AND policyname = 'api_all_users'
-  ) THEN
-    CREATE POLICY api_all_users ON users FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
-  END IF;
+  DROP POLICY IF EXISTS service_role_all_users ON users;
+  DROP POLICY IF EXISTS api_all_users ON users;
+  CREATE POLICY api_all_users ON users FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
 END $$;
 
 -- 4. Seed Default Settings
@@ -108,7 +100,7 @@ ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 INSERT INTO users (email, password_hash, name, role)
 VALUES (
   'admin@mess.edu',
-  '$2a$10$.67M90L4dMKHmPsR7u.bMu5RIEm5DMV6M41/G6siLdWIzIvG3gikK',
+  '$2a$10$7iHVjqWvLO3I3Z771MIF8OlWH5RMnFHqpwvYTaqn3oQaAMLjwxTLu',
   'Mess Superintendent',
   'admin'
 )
