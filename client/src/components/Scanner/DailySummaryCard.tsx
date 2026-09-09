@@ -17,7 +17,7 @@ export const DailySummaryCard: React.FC<DailySummaryCardProps> = ({
   total,
   percentage
 }) => {
-  const displayTitle = sessionLabel || (mealType === 'Dinner' ? 'Full Meal Token Redeemed' : 'Snack Token Redeemed');
+  const displayTitle = sessionLabel || (mealType === 'Dinner' ? 'Meal Token Collection' : 'Snack Token Collection');
 
   return (
     <div className="w-full p-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
@@ -26,7 +26,7 @@ export const DailySummaryCard: React.FC<DailySummaryCardProps> = ({
           {displayTitle}
         </span>
         <span className="text-xs font-bold text-slate-800">
-          <strong className="text-brand-600 font-extrabold">{count}</strong> / {total} tokens redeemed ({percentage}%)
+          <strong className="text-brand-600 font-extrabold">{count}</strong> / {total} collected ({percentage}%)
         </span>
       </div>
       <ProgressBar value={percentage} height="h-2.5" color="bg-brand-500" />

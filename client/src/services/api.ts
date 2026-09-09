@@ -119,6 +119,17 @@ export const api = {
     return fetchJson(`/meals?${query.toString()}`);
   },
 
+  deleteMealRecord: async (params: { recordId?: number; studentId?: number; mealType?: string; mealDate?: string }): Promise<{ success: boolean; message: string }> => {
+    const query = new URLSearchParams();
+    if (params.recordId) query.append('record_id', String(params.recordId));
+    if (params.studentId) query.append('student_id', String(params.studentId));
+    if (params.mealType) query.append('meal_type', params.mealType);
+    if (params.mealDate) query.append('meal_date', params.mealDate);
+    return fetchJson<{ success: boolean; message: string }>(`/meals?${query.toString()}`, {
+      method: 'DELETE'
+    });
+  },
+
   // Reports
   getReports: async (params?: { startDate?: string; endDate?: string; department?: string; mealType?: string }) => {
     const query = new URLSearchParams();

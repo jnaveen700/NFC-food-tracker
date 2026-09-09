@@ -103,6 +103,23 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
     }
   }, [activeMeal, fetchStats, isProcessingScan, playSuccess, playDuplicate, playUnknown]);
 
+  // Reset / Clear specific collection record (POC Demo Feature)
+  const handleResetRecord = async (result: ScanResponse) => {
+    try {
+      await api.deleteMealRecord({
+        recordId: result.recordId,
+        studentId: result.student?.id,
+        mealType: result.mealType || activeMeal,
+        mealDate: result.mealDate
+      });
+      // Immediately refresh stats so dashboard count decreases and history/recent scans reflect the deletion
+      await fetchStats();
+    } catch (err: any) {
+      console.error('[Reset Record Error]', err);
+      throw err;
+    }
+  };
+
   // Web NFC hook
   const { isScanning: isNFCScanning, startScanning: startNFC, stopScanning: stopNFC } = useWebNFC({
     onScanSuccess: (detectedId) => {
@@ -211,15 +228,19 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
       </div>
 
       {/* Daily Progress Summary Card */}
-      {dashboardData && (
-        <DailySummaryCard
-          mealType={activeMeal}
-          sessionLabel={`${activeDay} • ${activeMeal === 'Dinner' ? 'Full Meal Token' : 'Snack Token'}`}
-          count={dashboardData.activeMealCount}
-          total={dashboardData.totalStudents}
-          percentage={dashboardData.activeMealPercentage}
-        />
-      )}
+      {dashboardData && (() => {
+        const sessionCount = activeMeal === 'Dinner' ? (dashboardData.meals?.dinner || 0) : (dashboardData.meals?.snack1 || 0);
+        const sessionPct = dashboardData.totalStudents > 0 ? Math.round((sessionCount / dashboardData.totalStudents) * 100) : 0;
+        return (
+          <DailySummaryCard
+            mealType={activeMeal}
+            sessionLabel={`${activeDay} • ${activeMeal === 'Dinner' ? 'Meal' : 'Snack'}`}
+            count={sessionCount}
+            total={dashboardData.totalStudents}
+            percentage={sessionPct}
+          />
+        );
+      })()}
 
       {/* Live Recent Scans Feed */}
       <RecentScansFeed
@@ -230,7 +251,9 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
       {/* Overlays & Sheets */}
       <ScanResultOverlay
         scanResult={scanResult}
+        sessionLabel={`${activeDay} • ${activeMeal === 'Dinner' ? 'Meal' : 'Snack'}`}
         onDismiss={() => setScanResult(null)}
+        onResetRecord={handleResetRecord}
         onAddStudentClick={(cardId) => {
           setScanResult(null);
           if (onAddStudentWithCard) onAddStudentWithCard(cardId || '');

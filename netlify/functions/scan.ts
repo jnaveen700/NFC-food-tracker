@@ -14,7 +14,8 @@ export const handler: Handler = async (event) => {
 
   try {
     const body = event.body ? JSON.parse(event.body) : {};
-    const { cardId, mealTypeOverride } = body;
+    const cardId = body.cardId || body.card_id;
+    const mealTypeOverride = body.mealTypeOverride || body.meal_type || body.mealType;
 
     if (!cardId || typeof cardId !== 'string') {
       return jsonResponse(400, { error: 'Valid card ID is required' });
@@ -76,6 +77,7 @@ export const handler: Handler = async (event) => {
       return jsonResponse(200, {
         status: 'already_recorded',
         message: 'Already recorded',
+        recordId: existingRecord.id,
         student: {
           id: student.id,
           name: student.name,
@@ -120,6 +122,7 @@ export const handler: Handler = async (event) => {
         return jsonResponse(200, {
           status: 'already_recorded',
           message: 'Already recorded',
+          recordId: duplicateRecord?.id,
           student: {
             id: student.id,
             name: student.name,

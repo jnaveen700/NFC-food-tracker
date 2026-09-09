@@ -14,7 +14,7 @@ export const RecentScansFeed: React.FC<RecentScansFeedProps> = ({ scans, onViewA
       <div className="flex items-center justify-between mb-2.5">
         <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
           <Clock className="w-3.5 h-3.5 text-brand-600" />
-          Recent Token Redemptions
+          Recent Collections
         </h3>
         {onViewAllHistory && (
           <button
@@ -28,7 +28,7 @@ export const RecentScansFeed: React.FC<RecentScansFeedProps> = ({ scans, onViewA
 
       {scans.length === 0 ? (
         <div className="p-4 bg-white border border-slate-200 rounded-2xl text-center text-xs text-slate-500 shadow-sm">
-          No food tokens redeemed yet today. Tap Start Scanning to begin.
+          No food tokens collected yet today. Tap Start Scanning to begin.
         </div>
       ) : (
         <div className="space-y-2">

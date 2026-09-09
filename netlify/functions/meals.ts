@@ -8,6 +8,45 @@ export const handler: Handler = async (event) => {
     return handleOptions();
   }
 
+  // DELETE handler: safely delete/reset a specific collection record
+  if (event.httpMethod === 'DELETE') {
+    try {
+      const params = event.queryStringParameters || {};
+      const supabase = getSupabaseClient();
+      const recordId = params.record_id ? Number(params.record_id) : undefined;
+      const studentId = params.student_id ? Number(params.student_id) : undefined;
+      const mealType = params.meal_type;
+      const mealDate = params.meal_date || getTodayDateString();
+
+      let deleteQuery = supabase.from('meal_records').delete();
+
+      if (recordId) {
+        deleteQuery = deleteQuery.eq('id', recordId);
+      } else if (studentId && mealType) {
+        deleteQuery = deleteQuery
+          .eq('student_id', studentId)
+          .eq('meal_type', mealType)
+          .eq('meal_date', mealDate);
+      } else {
+        return jsonResponse(400, { error: 'Missing record_id or (student_id and meal_type)' });
+      }
+
+      const { error: delErr } = await deleteQuery;
+      if (delErr) {
+        console.error('[Delete Meal Record Error]', delErr);
+        return jsonResponse(500, { error: delErr.message });
+      }
+
+      return jsonResponse(200, {
+        success: true,
+        message: 'Collection reset. The participant can be scanned again.'
+      });
+    } catch (err: any) {
+      console.error('[Delete Meal Record Error]', err);
+      return jsonResponse(500, { error: err.message || 'Error deleting collection record' });
+    }
+  }
+
   if (event.httpMethod !== 'GET') {
     return jsonResponse(405, { error: 'Method Not Allowed' });
   }
