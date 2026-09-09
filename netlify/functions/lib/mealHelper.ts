@@ -1,39 +1,60 @@
-import { db } from '../db';
+import { getSupabaseClient } from './supabase';
 
 export type MealType = 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack 1' | 'Snack 2' | 'Snack 3';
 
-export function getSettings(): Record<string, string> {
-  const rows = db.prepare('SELECT key, value FROM settings').all() as { key: string; value: string }[];
-  const settingsMap: Record<string, string> = {};
-  for (const r of rows) {
-    settingsMap[r.key] = r.value;
+export async function getSettingsMap(): Promise<Record<string, string>> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase.from('settings').select('key, value');
+
+  const settingsMap: Record<string, string> = {
+    breakfast_start: '07:00',
+    breakfast_end: '10:00',
+    snack1_start: '10:30',
+    snack1_end: '11:30',
+    lunch_start: '12:00',
+    lunch_end: '15:00',
+    snack2_start: '16:00',
+    snack2_end: '17:30',
+    dinner_start: '19:00',
+    dinner_end: '22:00',
+    snack3_start: '22:00',
+    snack3_end: '23:30',
+    mess_name: 'Central Hostel Mess',
+    total_capacity: '200'
+  };
+
+  if (!error && data) {
+    for (const item of data) {
+      settingsMap[item.key] = item.value;
+    }
   }
+
   return settingsMap;
 }
 
-export function getCurrentMealType(customTime?: Date): MealType {
-  const settings = getSettings();
+export function parseTimeMinutes(timeStr?: string, defaultMinutes: number = 0): number {
+  if (!timeStr) return defaultMinutes;
+  const [h, m] = timeStr.split(':').map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+export async function getCurrentMealType(customTime?: Date): Promise<MealType> {
+  const settings = await getSettingsMap();
   const date = customTime || new Date();
   const currentMinutes = date.getHours() * 60 + date.getMinutes();
-
-  const parseTimeMinutes = (timeStr: string, defaultMinutes: number) => {
-    if (!timeStr) return defaultMinutes;
-    const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + (m || 0);
-  };
 
   const bStart = parseTimeMinutes(settings.breakfast_start, 7 * 60);
   const bEnd = parseTimeMinutes(settings.breakfast_end, 10 * 60);
 
   const s1Start = parseTimeMinutes(settings.snack1_start, 10 * 60 + 30);
   const s1End = parseTimeMinutes(settings.snack1_end, 11 * 60 + 30);
-  
+
   const lStart = parseTimeMinutes(settings.lunch_start, 12 * 60);
   const lEnd = parseTimeMinutes(settings.lunch_end, 15 * 60);
 
   const s2Start = parseTimeMinutes(settings.snack2_start, 16 * 60);
   const s2End = parseTimeMinutes(settings.snack2_end, 17 * 60 + 30);
-  
+
   const dStart = parseTimeMinutes(settings.dinner_start, 19 * 60);
   const dEnd = parseTimeMinutes(settings.dinner_end, 22 * 60);
 
@@ -53,7 +74,7 @@ export function getCurrentMealType(customTime?: Date): MealType {
   if (currentMinutes > bEnd && currentMinutes < lStart) return 'Snack 1';
   if (currentMinutes > lEnd && currentMinutes < dStart) return 'Snack 2';
   if (currentMinutes > dEnd) return 'Snack 3';
-  
+
   return 'Breakfast';
 }
 
@@ -66,7 +87,8 @@ export function getTodayDateString(customDate?: Date): string {
 }
 
 export function formatTime12H(dateInput?: Date | string): string {
-  const date = dateInput ? new Date(dateInput) : new Date();
+  if (!dateInput) return '';
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   let hours = date.getHours();
   const minutes = date.getMinutes();
   const ampm = hours >= 12 ? 'PM' : 'AM';

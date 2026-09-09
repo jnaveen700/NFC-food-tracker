@@ -1,0 +1,79 @@
+[build]
+  command = "npm run build"
+  publish = "client/dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# API Redirects to Netlify Functions
+[[redirects]]
+  from = "/api/auth/login"
+  to = "/.netlify/functions/auth-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/scan"
+  to = "/.netlify/functions/scan"
+  status = 200
+
+[[redirects]]
+  from = "/api/dashboard"
+  to = "/.netlify/functions/dashboard"
+  status = 200
+
+[[redirects]]
+  from = "/api/students/import"
+  to = "/.netlify/functions/students-import"
+  status = 200
+
+[[redirects]]
+  from = "/api/students/:id/history"
+  to = "/.netlify/functions/student-detail?id=:id&action=history"
+  status = 200
+
+[[redirects]]
+  from = "/api/students/:id"
+  to = "/.netlify/functions/student-detail?id=:id"
+  status = 200
+
+[[redirects]]
+  from = "/api/students"
+  to = "/.netlify/functions/students"
+  status = 200
+
+[[redirects]]
+  from = "/api/meals"
+  to = "/.netlify/functions/meals"
+  status = 200
+
+[[redirects]]
+  from = "/api/reports/export"
+  to = "/.netlify/functions/reports-export"
+  status = 200
+
+[[redirects]]
+  from = "/api/reports"
+  to = "/.netlify/functions/reports"
+  status = 200
+
+[[redirects]]
+  from = "/api/settings/reseed"
+  to = "/.netlify/functions/reseed"
+  status = 200
+
+[[redirects]]
+  from = "/api/settings"
+  to = "/.netlify/functions/settings"
+  status = 200
+
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+# SPA Fallback Routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,12 +1,26 @@
 {
-  "name": "nfc-hostel-mess-tracker",
+  "name": "nfc-food-tracker",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install:all": "cmd /c \"cd server && npm install\" && cmd /c \"cd client && npm install\"",
-    "dev:server": "cmd /c \"cd server && npm run dev\"",
-    "dev:client": "cmd /c \"cd client && npm run dev\"",
-    "db:reseed": "cmd /c \"cd server && npm run db:reseed\"",
-    "build": "cmd /c \"cd server && npm run build\" && cmd /c \"cd client && npm run build\""
+    "dev": "tsx dev-server.ts",
+    "dev:functions": "tsx dev-server.ts",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "build:client": "npm --prefix client run build",
+    "install:all": "npm install && npm --prefix client install"
+  },
+  "dependencies": {
+    "@netlify/functions": "^3.0.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/node": "^22.13.0",
+    "tsx": "^4.19.3"
   }
 }
