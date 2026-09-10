@@ -70,14 +70,14 @@ export const StudentProfileSheet: React.FC<StudentProfileSheetProps> = ({
           </div>
         </div>
 
-        {/* Food Token Allowance Card (3 Snacks + 1 Full Meal) */}
+        {/* Food Session Allowance Card (3 Snacks + 1 Meal) */}
         <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2.5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">
-              Food Token Quota (4 Tokens)
+              Food Session Quota (4 Sessions)
             </span>
             <span className="text-[11px] font-bold text-brand-700 bg-brand-50 border border-brand-200 px-2 py-0.5 rounded-full">
-              {history.length} / 4 Redeemed
+              {history.length} / 4 Collected
             </span>
           </div>
 
@@ -86,19 +86,19 @@ export const StudentProfileSheet: React.FC<StudentProfileSheetProps> = ({
             <div className="p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-between shadow-xs">
               <span className="font-semibold text-slate-700">Day 1 Snack</span>
               <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
-                history.some((h) => h.meal_type === 'Snack 1') ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                history.some((h) => h.meal_type === 'Day 1 Snack') ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
               }`}>
-                {history.some((h) => h.meal_type === 'Snack 1') ? 'Redeemed' : 'Pending'}
+                {history.some((h) => h.meal_type === 'Day 1 Snack') ? 'Collected' : 'Not Collected'}
               </span>
             </div>
 
-            {/* Day 1 Full Meal */}
+            {/* Day 1 Meal */}
             <div className="p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-between shadow-xs">
-              <span className="font-semibold text-slate-700">Day 1 Full Meal</span>
+              <span className="font-semibold text-slate-700">Day 1 Meal</span>
               <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
-                history.some((h) => h.meal_type === 'Dinner') ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                history.some((h) => h.meal_type === 'Day 1 Meal') ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
               }`}>
-                {history.some((h) => h.meal_type === 'Dinner') ? 'Redeemed' : 'Pending'}
+                {history.some((h) => h.meal_type === 'Day 1 Meal') ? 'Collected' : 'Not Collected'}
               </span>
             </div>
 
@@ -106,9 +106,9 @@ export const StudentProfileSheet: React.FC<StudentProfileSheetProps> = ({
             <div className="p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-between shadow-xs">
               <span className="font-semibold text-slate-700">Day 2 Snack</span>
               <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
-                history.length >= 3 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                history.some((h) => h.meal_type === 'Day 2 Snack') ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
               }`}>
-                {history.length >= 3 ? 'Redeemed' : 'Pending'}
+                {history.some((h) => h.meal_type === 'Day 2 Snack') ? 'Collected' : 'Not Collected'}
               </span>
             </div>
 
@@ -116,9 +116,9 @@ export const StudentProfileSheet: React.FC<StudentProfileSheetProps> = ({
             <div className="p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-between shadow-xs">
               <span className="font-semibold text-slate-700">Day 3 Snack</span>
               <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
-                history.length >= 4 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                history.some((h) => h.meal_type === 'Day 3 Snack') ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
               }`}>
-                {history.length >= 4 ? 'Redeemed' : 'Pending'}
+                {history.some((h) => h.meal_type === 'Day 3 Snack') ? 'Collected' : 'Not Collected'}
               </span>
             </div>
           </div>

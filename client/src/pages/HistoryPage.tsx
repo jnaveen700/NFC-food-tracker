@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Calendar, Check, Download, RotateCcw, AlertTriangle, X } from 'lucide-react';
-import { MealRecord, MealType } from '../types';
+import { MealRecord } from '../types';
 import { api } from '../services/api';
-import { SegmentedControl } from '../components/UI/SegmentedControl';
 import { Input } from '../components/UI/Input';
 import { Button } from '../components/UI/Button';
 
 export const HistoryPage: React.FC = () => {
   const [records, setRecords] = useState<MealRecord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [mealFilter, setMealFilter] = useState<string>('ALL');
-  const [dateFilter, setDateFilter] = useState<string>('today');
+  const [sessionFilter, setSessionFilter] = useState<string>('ALL');
+  const [dateFilter, setDateFilter] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [recordToReset, setRecordToReset] = useState<MealRecord | null>(null);
@@ -22,7 +21,7 @@ export const HistoryPage: React.FC = () => {
       setIsLoading(true);
       const res = await api.getMeals({
         date: dateFilter,
-        meal_type: mealFilter,
+        session: sessionFilter !== 'ALL' ? sessionFilter : undefined,
         search: searchTerm,
         limit: 100
       });
@@ -33,16 +32,18 @@ export const HistoryPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [dateFilter, mealFilter, searchTerm]);
+  }, [dateFilter, sessionFilter, searchTerm]);
 
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
 
-  const mealFilterOptions = [
+  const sessionFilterOptions = [
     { value: 'ALL', label: 'All Sessions' },
-    { value: 'Snack 1', label: 'Snack' },
-    { value: 'Dinner', label: 'Meal' }
+    { value: 'Day 1 Snack', label: 'Day 1 Snack' },
+    { value: 'Day 1 Meal', label: 'Day 1 Meal' },
+    { value: 'Day 2 Snack', label: 'Day 2 Snack' },
+    { value: 'Day 3 Snack', label: 'Day 3 Snack' }
   ];
 
   const handleConfirmReset = async () => {
@@ -52,6 +53,7 @@ export const HistoryPage: React.FC = () => {
       await api.deleteMealRecord({
         recordId: recordToReset.id,
         studentId: recordToReset.student_id,
+        session: recordToReset.meal_type,
         mealType: recordToReset.meal_type,
         mealDate: recordToReset.meal_date
       });
@@ -65,6 +67,14 @@ export const HistoryPage: React.FC = () => {
     } finally {
       setIsResetting(false);
     }
+  };
+
+  const formatSession = (s: string) => {
+    if (s === 'Day 1 Snack') return 'Day 1 • Snack';
+    if (s === 'Day 1 Meal') return 'Day 1 • Meal';
+    if (s === 'Day 2 Snack') return 'Day 2 • Snack';
+    if (s === 'Day 3 Snack') return 'Day 3 • Snack';
+    return s;
   };
 
   return (
@@ -82,9 +92,9 @@ export const HistoryPage: React.FC = () => {
       {/* Top Header & Export */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h1 className="text-xl font-extrabold text-slate-900">Food Token History</h1>
+          <h1 className="text-xl font-extrabold text-slate-900">Collection History</h1>
           <p className="text-xs text-slate-500 font-medium">
-            Showing {records.length} of {totalCount} food token collections
+            Showing {records.length} of {totalCount} participant collections
           </p>
         </div>
 
@@ -99,41 +109,30 @@ export const HistoryPage: React.FC = () => {
         </a>
       </div>
 
-      {/* Date & Search Controls */}
+      {/* Search & Filter Controls */}
       <div className="space-y-3 mb-3">
         <Input
-          placeholder="Search participant, roll no, card..."
+          placeholder="Search participant, roll number..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           icon={<Search className="w-4 h-4 text-slate-400" />}
         />
 
-        <div className="flex items-center gap-2">
-          <div className="flex-1">
-            <SegmentedControl
-              options={mealFilterOptions}
-              value={mealFilter}
-              onChange={(val) => setMealFilter(val)}
-            />
-          </div>
-          <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-2xl p-1 shrink-0">
+        {/* Session Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+          {sessionFilterOptions.map((opt) => (
             <button
-              onClick={() => setDateFilter('today')}
-              className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-colors ${
-                dateFilter === 'today' ? 'bg-brand-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              key={opt.value}
+              onClick={() => setSessionFilter(opt.value)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${
+                sessionFilter === opt.value
+                  ? 'bg-brand-500 text-white shadow-sm'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
-              Today
+              {opt.label}
             </button>
-            <button
-              onClick={() => setDateFilter('ALL')}
-              className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-colors ${
-                dateFilter === 'ALL' ? 'bg-brand-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              All Days
-            </button>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -148,12 +147,12 @@ export const HistoryPage: React.FC = () => {
         <div className="p-8 bg-white border border-slate-200 rounded-3xl text-center my-6 shadow-sm">
           <Calendar className="w-10 h-10 text-slate-400 mx-auto mb-2" />
           <h3 className="text-sm font-bold text-slate-800">No collection records found</h3>
-          <p className="text-xs text-slate-500 mt-1">Try clearing your session filter or search term.</p>
+          <p className="text-xs text-slate-500 mt-1">Scan participant cards to start tracking attendance.</p>
         </div>
       ) : (
         <div className="space-y-2">
           {records.map((r) => {
-            const tokenLabel = r.meal_type === 'Dinner' ? 'Meal Token' : 'Snack Token';
+            const displayLabel = formatSession(r.meal_type);
             return (
               <div
                 key={r.id}
@@ -176,7 +175,7 @@ export const HistoryPage: React.FC = () => {
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right">
                     <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 block mb-0.5">
-                      {tokenLabel}
+                      {displayLabel}
                     </span>
                     <span className="text-[11px] text-slate-500 font-mono">
                       {r.formatted_time || r.scanned_at}
@@ -224,10 +223,10 @@ export const HistoryPage: React.FC = () => {
             <div className="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-2xl text-left text-xs space-y-1">
               <div className="font-extrabold text-rose-950 text-sm">{recordToReset.student_name}</div>
               <div className="font-semibold text-rose-800">
-                {recordToReset.meal_type === 'Dinner' ? 'Meal Token' : 'Snack Token'} • {recordToReset.meal_date}
+                {formatSession(recordToReset.meal_type)} • {recordToReset.meal_date}
               </div>
               <div className="text-[11px] text-slate-600 pt-1 border-t border-rose-200">
-                The participant will return to "Not Collected" and can be scanned again.
+                The participant will return to "Not Collected" for this session and can be scanned again.
               </div>
             </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Users, Calendar, AlertCircle, RefreshCw, CheckCircle2, Clock, Sparkles } from 'lucide-react';
+import { Users, Calendar, AlertCircle, RefreshCw, CheckCircle2, Clock } from 'lucide-react';
 import { DashboardData, EventDay } from '../types';
 import { api } from '../services/api';
 import { ProgressBar } from '../components/UI/ProgressBar';
@@ -39,23 +39,35 @@ export const DashboardPage: React.FC = () => {
     );
   }
 
-  const totalParticipants = data.totalStudents || 20;
+  const totalParticipants = data.totalStudents || 65;
 
-  // Real collections from backend response
-  const day1SnackCount = data.dayCollections?.day1.snack ?? data.meals.snack1;
-  const day1MealCount = data.dayCollections?.day1.meal ?? data.meals.dinner;
-  const day2SnackCount = data.dayCollections?.day2.snack ?? data.meals.snack1;
-  const day3SnackCount = data.dayCollections?.day3.snack ?? data.meals.snack1;
+  // Exact session collections from backend response
+  const day1SnackCount = data.dayCollections?.day1?.snack ?? 0;
+  const day1MealCount = data.dayCollections?.day1?.meal ?? 0;
+  const day2SnackCount = data.dayCollections?.day2?.snack ?? 0;
+  const day3SnackCount = data.dayCollections?.day3?.snack ?? 0;
+
+  const formatPct = (count: number) => {
+    if (totalParticipants === 0 || count === 0) return '0%';
+    const pct = (count / totalParticipants) * 100;
+    return `${Number.isInteger(pct) ? pct : pct.toFixed(2)}%`;
+  };
+
+  const getPctNum = (count: number) => {
+    if (totalParticipants === 0) return 0;
+    return Math.round((count / totalParticipants) * 100);
+  };
 
   // Active day metrics
-  const activeDayCount = selectedDay === 'Day 1'
-    ? day1SnackCount
+  const activeDayTotalCollected = selectedDay === 'Day 1'
+    ? day1SnackCount + day1MealCount
     : selectedDay === 'Day 2'
     ? day2SnackCount
     : day3SnackCount;
 
-  const activeDayPercentage = totalParticipants > 0 ? Math.round((activeDayCount / totalParticipants) * 100) : 0;
-  const activeDayPending = Math.max(0, totalParticipants - activeDayCount);
+  const activeDayMaxQuota = selectedDay === 'Day 1' ? totalParticipants * 2 : totalParticipants;
+  const activeDayPercentage = activeDayMaxQuota > 0 ? Math.round((activeDayTotalCollected / activeDayMaxQuota) * 100) : 0;
+  const activeDayPending = Math.max(0, activeDayMaxQuota - activeDayTotalCollected);
 
   const days: { day: EventDay; subtitle: string }[] = [
     { day: 'Day 1', subtitle: 'Snack + Meal' },
@@ -69,13 +81,13 @@ export const DashboardPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-[10px] font-extrabold uppercase tracking-wider">
+            <span className="px-2.5 py-0.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-[10px] font-extrabold uppercase tracking-wider">
               NEXUS Fest 2026
             </span>
           </div>
-          <h1 className="text-xl font-extrabold text-slate-900 mt-1">Food Token Analytics</h1>
+          <h1 className="text-xl font-extrabold text-slate-900 mt-1">Collection Analytics</h1>
           <p className="text-xs text-slate-500 font-medium">
-            3 Snacks (1/day) + 1 Full Meal Allowance per Participant
+            IV-I CSE (Data Science) • 65 Official Participants
           </p>
         </div>
 
@@ -93,25 +105,25 @@ export const DashboardPage: React.FC = () => {
         <StatCard
           title="Participants"
           value={totalParticipants}
-          subtitle="4 Food Tokens Each"
+          subtitle="4 Food Sessions Quota"
           icon={<Users className="w-4 h-4" />}
         />
         <StatCard
           title="Current Day"
           value={selectedDay}
-          subtitle={selectedDay === 'Day 1' ? 'Snack + Full Meal' : '1 Snack Token'}
+          subtitle={selectedDay === 'Day 1' ? 'Snack + Meal' : '1 Snack'}
           icon={<Calendar className="w-4 h-4" />}
         />
         <StatCard
-          title="Tokens Redeemed"
-          value={`${activeDayCount} / ${totalParticipants}`}
-          subtitle={`${selectedDay} Token Session`}
+          title="Collections"
+          value={`${activeDayTotalCollected} / ${activeDayMaxQuota}`}
+          subtitle={`${selectedDay} Total`}
           icon={<CheckCircle2 className="w-4 h-4" />}
         />
         <StatCard
-          title="Tokens Pending"
+          title="Pending"
           value={activeDayPending}
-          subtitle={`${activeDayPercentage}% Redeemed`}
+          subtitle={`${activeDayPercentage}% Turnout`}
           icon={<Clock className="w-4 h-4" />}
         />
       </div>
@@ -124,7 +136,7 @@ export const DashboardPage: React.FC = () => {
             Select Fest Day
           </span>
           <span className="text-[11px] text-slate-500 font-medium">
-            3 Snacks (1/day) + 1 Full Meal
+            3 Snacks (1/day) + 1 Meal
           </span>
         </div>
 
@@ -143,7 +155,7 @@ export const DashboardPage: React.FC = () => {
               >
                 <div className="text-sm font-extrabold">{day}</div>
                 <div className={`text-[10px] font-semibold mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
-                  {day === 'Day 1' ? '1 Snack + 1 Full Meal' : '1 Snack Token'}
+                  {subtitle}
                 </div>
               </button>
             );
@@ -151,19 +163,19 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Selected Day Food Token Details */}
+      {/* Selected Day Collection Details */}
       <div className="p-5 bg-white border border-slate-200 rounded-3xl shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-900">
-              {selectedDay} Food Token Redemptions
+              {selectedDay} Collection Status
             </h2>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Token redemption rate across all 20 registered participants
+              Collection progress across all {totalParticipants} registered participants
             </p>
           </div>
           <span className="px-2.5 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-bold">
-            {selectedDay === 'Day 1' ? 'Snack + Full Meal' : '1 Snack'}
+            {selectedDay === 'Day 1' ? 'Snack + Meal' : '1 Snack'}
           </span>
         </div>
 
@@ -172,87 +184,87 @@ export const DashboardPage: React.FC = () => {
             {/* Day 1 Snack */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-slate-900">Day 1 Snack Token</span>
+                <span className="text-xs font-extrabold text-slate-900">Day 1 Snack</span>
                 <span className="text-xs font-extrabold text-brand-700">
-                  {Math.round((day1SnackCount / totalParticipants) * 100)}%
+                  {formatPct(day1SnackCount)}
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-black text-slate-900">{day1SnackCount}</span>
-                <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Tokens Redeemed</span>
+                <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Collected</span>
               </div>
               <ProgressBar
-                value={Math.round((day1SnackCount / totalParticipants) * 100)}
+                value={getPctNum(day1SnackCount)}
                 height="h-2.5"
                 color="bg-brand-500"
               />
               <div className="text-[11px] text-slate-500 font-medium">
-                {totalParticipants - day1SnackCount} participants yet to redeem
+                {totalParticipants - day1SnackCount} participants pending
               </div>
             </div>
 
-            {/* Day 1 Full Meal */}
+            {/* Day 1 Meal */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-slate-900">Day 1 Full Meal Token</span>
+                <span className="text-xs font-extrabold text-slate-900">Day 1 Meal</span>
                 <span className="text-xs font-extrabold text-brand-700">
-                  {Math.round((day1MealCount / totalParticipants) * 100)}%
+                  {formatPct(day1MealCount)}
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-black text-slate-900">{day1MealCount}</span>
-                <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Tokens Redeemed</span>
+                <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Collected</span>
               </div>
               <ProgressBar
-                value={Math.round((day1MealCount / totalParticipants) * 100)}
+                value={getPctNum(day1MealCount)}
                 height="h-2.5"
                 color="bg-brand-500"
               />
               <div className="text-[11px] text-slate-500 font-medium">
-                {totalParticipants - day1MealCount} participants yet to redeem
+                {totalParticipants - day1MealCount} participants pending
               </div>
             </div>
           </div>
         ) : selectedDay === 'Day 2' ? (
           <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold text-slate-900">Day 2 Snack Token</span>
+              <span className="text-xs font-extrabold text-slate-900">Day 2 Snack</span>
               <span className="text-xs font-extrabold text-brand-700">
-                {Math.round((day2SnackCount / totalParticipants) * 100)}%
+                {formatPct(day2SnackCount)}
               </span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-black text-slate-900">{day2SnackCount}</span>
-              <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Tokens Redeemed</span>
+              <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Collected</span>
             </div>
             <ProgressBar
-              value={Math.round((day2SnackCount / totalParticipants) * 100)}
+              value={getPctNum(day2SnackCount)}
               height="h-2.5"
               color="bg-brand-500"
             />
             <div className="text-[11px] text-slate-500 font-medium">
-              {totalParticipants - day2SnackCount} participants yet to redeem
+              {totalParticipants - day2SnackCount} participants pending
             </div>
           </div>
         ) : (
           <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold text-slate-900">Day 3 Snack Token</span>
+              <span className="text-xs font-extrabold text-slate-900">Day 3 Snack</span>
               <span className="text-xs font-extrabold text-brand-700">
-                {Math.round((day3SnackCount / totalParticipants) * 100)}%
+                {formatPct(day3SnackCount)}
               </span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-black text-slate-900">{day3SnackCount}</span>
-              <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Tokens Redeemed</span>
+              <span className="text-xs font-bold text-slate-500">/ {totalParticipants} Collected</span>
             </div>
             <ProgressBar
-              value={Math.round((day3SnackCount / totalParticipants) * 100)}
+              value={getPctNum(day3SnackCount)}
               height="h-2.5"
               color="bg-brand-500"
             />
             <div className="text-[11px] text-slate-500 font-medium">
-              {totalParticipants - day3SnackCount} participants yet to redeem
+              {totalParticipants - day3SnackCount} participants pending
             </div>
           </div>
         )}
@@ -263,14 +275,14 @@ export const DashboardPage: React.FC = () => {
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
             <AlertCircle className="w-4 h-4 text-amber-600" />
-            Pending Token Redemption ({data.missingStudents.length})
+            Pending Collection ({data.missingStudents.length})
           </h3>
-          <span className="text-[11px] text-slate-500 font-medium">Food Token Roster</span>
+          <span className="text-[11px] text-slate-500 font-medium">Participant Roster</span>
         </div>
 
         {data.missingStudents.length === 0 ? (
           <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-center text-xs text-emerald-700 font-bold">
-            ✓ 100% Turnout! All registered participants have redeemed their food tokens for this session.
+            ✓ 100% Turnout! All registered participants have completed collection for this session.
           </div>
         ) : (
           <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">

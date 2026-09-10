@@ -18,13 +18,15 @@ export const DemoScannerSheet: React.FC<DemoScannerSheetProps> = ({
   onSimulateScan,
   isLoading = false
 }) => {
-  const [customCardId, setCustomCardId] = useState('NFC-23CSE1001');
+  const [customCardId, setCustomCardId] = useState('23AK1A3218');
 
   const demoCards = [
-    { label: 'Karthikeya R (CSD 4th Yr)', cardId: 'NFC-23CSE1001' },
-    { label: 'Priya Sharma (CSE 3rd Yr)', cardId: 'NFC-23CSE1002' },
-    { label: 'Arjun Reddy (ECE 2nd Yr)', cardId: 'NFC-23CSE1003' },
-    { label: 'Unrecognized / New Card', cardId: 'NFC-99999999' }
+    { label: 'Karthikeya R (CSD 4th Yr)', rollNumber: '23AK1A3218' },
+    { label: 'ARSHIYA K (CSD 4th Yr)', rollNumber: '23AK1A3201' },
+    { label: 'NAVEEN J (CSD 4th Yr)', rollNumber: '23AK1A3230' },
+    { label: 'YUGANDHAR K (CSD 4th Yr)', rollNumber: '23AK1A3260' },
+    { label: 'VEDANTHESHWAR M (CSD 4th Yr)', rollNumber: '24AK5A3206' },
+    { label: 'Unregistered NFC Card', rollNumber: '99AK9A9999' }
   ];
 
   const handleSimulate = (cardIdToUse?: string) => {
@@ -42,8 +44,8 @@ export const DemoScannerSheet: React.FC<DemoScannerSheetProps> = ({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-brand-600 shrink-0" />
             <div className="text-xs">
-              <span className="font-extrabold text-slate-900 block">Demo Scanner Mode</span>
-              <span className="text-slate-600">Simulates NFC card tap against real API endpoint</span>
+              <span className="font-extrabold text-slate-900 block">NFC Simulation Mode</span>
+              <span className="text-slate-600">Simulates physical NFC card tap with plain roll number</span>
             </div>
           </div>
           <Badge variant="brand" size="sm">Active</Badge>
@@ -57,10 +59,10 @@ export const DemoScannerSheet: React.FC<DemoScannerSheetProps> = ({
           <div className="grid grid-cols-1 gap-2">
             {demoCards.map((card) => (
               <button
-                key={card.cardId}
+                key={card.rollNumber}
                 onClick={() => {
-                  setCustomCardId(card.cardId);
-                  handleSimulate(card.cardId);
+                  setCustomCardId(card.rollNumber);
+                  handleSimulate(card.rollNumber);
                 }}
                 className="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left flex items-center justify-between transition-all group active:scale-[0.99]"
               >
@@ -68,7 +70,7 @@ export const DemoScannerSheet: React.FC<DemoScannerSheetProps> = ({
                   <div className="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
                     {card.label}
                   </div>
-                  <div className="text-[11px] font-mono text-slate-500 mt-0.5">{card.cardId}</div>
+                  <div className="text-[11px] font-mono text-slate-500 mt-0.5">{card.rollNumber}</div>
                 </div>
                 <Zap className="w-4 h-4 text-slate-400 group-hover:text-brand-600 transition-colors" />
               </button>
@@ -79,10 +81,10 @@ export const DemoScannerSheet: React.FC<DemoScannerSheetProps> = ({
         {/* Manual Card Input */}
         <div className="pt-2 border-t border-slate-200">
           <Input
-            label="Or Enter Custom Card ID"
+            label="Or Enter Roll Number"
             value={customCardId}
             onChange={(e) => setCustomCardId(e.target.value)}
-            placeholder="e.g. NFC-23CSE1001"
+            placeholder="e.g. 23AK1A3218"
             icon={<Smartphone className="w-4 h-4 text-slate-400" />}
           />
         </div>

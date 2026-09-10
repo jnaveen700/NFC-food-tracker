@@ -1,6 +1,7 @@
 import { Handler } from '@netlify/functions';
 import { getSupabaseClient } from './lib/supabase';
 import { getTodayDateString, formatTime12H } from './lib/mealHelper';
+import { formatSessionLabel } from './scan';
 import { jsonResponse, handleOptions } from './lib/response';
 
 export const handler: Handler = async (event) => {
@@ -8,15 +9,14 @@ export const handler: Handler = async (event) => {
     return handleOptions();
   }
 
-  // DELETE handler: safely delete/reset a specific collection record
+  // DELETE handler: safely reset a specific collection record
   if (event.httpMethod === 'DELETE') {
     try {
       const params = event.queryStringParameters || {};
       const supabase = getSupabaseClient();
       const recordId = params.record_id ? Number(params.record_id) : undefined;
       const studentId = params.student_id ? Number(params.student_id) : undefined;
-      const mealType = params.meal_type;
-      const mealDate = params.meal_date || getTodayDateString();
+      const mealType = params.meal_type || params.session;
 
       let deleteQuery = supabase.from('meal_records').delete();
 
@@ -25,8 +25,9 @@ export const handler: Handler = async (event) => {
       } else if (studentId && mealType) {
         deleteQuery = deleteQuery
           .eq('student_id', studentId)
-          .eq('meal_type', mealType)
-          .eq('meal_date', mealDate);
+          .eq('meal_type', mealType);
+      } else if (studentId) {
+        return jsonResponse(400, { error: 'Session (meal_type) is required when deleting by student_id' });
       } else {
         return jsonResponse(400, { error: 'Missing record_id or (student_id and meal_type)' });
       }
@@ -53,12 +54,10 @@ export const handler: Handler = async (event) => {
 
   try {
     const params = event.queryStringParameters || {};
-    let dateStr = params.date || getTodayDateString();
-    if (dateStr === 'today') dateStr = getTodayDateString();
-
-    const mealType = params.meal_type;
+    let dateStr = params.date;
+    const mealType = params.meal_type || params.session;
     const search = params.search?.trim();
-    const limit = params.limit ? Number(params.limit) : 50;
+    const limit = params.limit ? Number(params.limit) : 100;
     const offset = params.offset ? Number(params.offset) : 0;
 
     const supabase = getSupabaseClient();
@@ -81,11 +80,12 @@ export const handler: Handler = async (event) => {
         )
       `, { count: 'exact' });
 
-    if (dateStr && dateStr !== 'ALL') {
+    if (dateStr && dateStr !== 'ALL' && dateStr !== 'all') {
+      if (dateStr === 'today') dateStr = getTodayDateString();
       query = query.eq('meal_date', dateStr);
     }
 
-    if (mealType && mealType !== 'ALL') {
+    if (mealType && mealType !== 'ALL' && mealType !== 'all') {
       query = query.eq('meal_type', mealType);
     }
 
@@ -110,12 +110,14 @@ export const handler: Handler = async (event) => {
       id: r.id,
       student_id: r.student_id,
       meal_type: r.meal_type,
+      session: r.meal_type,
+      sessionLabel: formatSessionLabel(r.meal_type),
       meal_date: r.meal_date,
       scanned_at: r.scanned_at,
       student_name: r.students?.name || '',
       roll_number: r.students?.roll_number || '',
-      department: r.students?.department || '',
-      year: r.students?.year || 1,
+      department: r.students?.department || 'CSD',
+      year: r.students?.year || 4,
       card_id: r.students?.card_id || '',
       formatted_time: formatTime12H(r.scanned_at)
     }));
@@ -125,7 +127,7 @@ export const handler: Handler = async (event) => {
       total: count || 0,
       limit,
       offset,
-      date: dateStr,
+      date: dateStr || 'ALL',
       mealType: mealType || 'ALL'
     });
   } catch (err: any) {

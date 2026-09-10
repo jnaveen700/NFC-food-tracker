@@ -40,8 +40,16 @@ export const ScanResultOverlay: React.FC<ScanResultOverlayProps> = ({
   const isError = scanResult.status === 'error' || scanResult.status === 'inactive';
 
   // Compute readable session display (e.g., "Day 1 • Snack")
-  const sessionName = scanResult.mealType === 'Dinner' ? 'Meal' : 'Snack';
-  const displaySession = sessionLabel || sessionName;
+  const formatSession = (s?: string) => {
+    if (!s) return 'Day 1 • Snack';
+    if (s.includes('•')) return s;
+    if (s === 'Day 1 Snack') return 'Day 1 • Snack';
+    if (s === 'Day 1 Meal') return 'Day 1 • Meal';
+    if (s === 'Day 2 Snack') return 'Day 2 • Snack';
+    if (s === 'Day 3 Snack') return 'Day 3 • Snack';
+    return s;
+  };
+  const displaySession = formatSession(scanResult.sessionLabel || sessionLabel || scanResult.session || scanResult.mealType);
 
   const handleConfirmReset = async () => {
     if (!onResetRecord || !scanResult) return;

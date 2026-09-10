@@ -79,113 +79,97 @@ END $$;
 -- 4. Seed Default Settings
 INSERT INTO settings (key, value)
 VALUES
-  ('breakfast_start', '07:00'),
-  ('breakfast_end', '10:00'),
-  ('snack1_start', '10:30'),
-  ('snack1_end', '11:30'),
-  ('lunch_start', '12:00'),
-  ('lunch_end', '15:00'),
-  ('snack2_start', '16:00'),
-  ('snack2_end', '17:30'),
-  ('dinner_start', '19:00'),
-  ('dinner_end', '22:00'),
-  ('snack3_start', '22:00'),
-  ('snack3_end', '23:30'),
-  ('mess_name', 'Central Hostel Mess'),
-  ('total_capacity', '200')
+  ('snack_start', '10:30'),
+  ('snack_end', '11:30'),
+  ('meal_start', '19:00'),
+  ('meal_end', '22:00'),
+  ('mess_name', 'NEXUS Fest 2026'),
+  ('total_capacity', '65')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 
 -- 5. Seed Default Admin User (Password: admin123)
--- Valid bcrypt hash generated with bcryptjs for 'admin123' (10 rounds)
 INSERT INTO users (email, password_hash, name, role)
 VALUES (
   'admin@mess.edu',
   '$2a$10$7iHVjqWvLO3I3Z771MIF8OlWH5RMnFHqpwvYTaqn3oQaAMLjwxTLu',
-  'Mess Superintendent',
+  'NEXUS Admin',
   'admin'
 )
 ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash;
 
--- 6. Seed 20 Sample Students
+-- 6. Seed 65 Official NEXUS Participants (IV-I CSE Data Science)
 INSERT INTO students (roll_number, name, card_id, department, year, active)
 VALUES
-  ('23AK1A3218', 'Karthikeya R', 'NFC-23CSE1001', 'CSD', 4, true),
-  ('23CSE1002', 'Priya Sharma', 'NFC-23CSE1002', 'CSE', 3, true),
-  ('23ECE1003', 'Arjun Reddy', 'NFC-23CSE1003', 'ECE', 2, true),
-  ('23ECE1004', 'Ananya Roy', 'NFC-23CSE1004', 'ECE', 2, true),
-  ('23ME1005', 'Sai Teja', 'NFC-23CSE1005', 'MECH', 4, true),
-  ('23EEE1006', 'Aditya Verma', 'NFC-23CSE1006', 'EEE', 1, true),
-  ('23CIV1007', 'Sneha Patel', 'NFC-23CSE1007', 'CIVIL', 3, true),
-  ('23CSE1008', 'Rohan Gupta', 'NFC-23CSE1008', 'CSE', 2, true),
-  ('23IT1009', 'Kavya Nair', 'NFC-23CSE1009', 'IT', 4, true),
-  ('23ME1010', 'Vikram Singh', 'NFC-23CSE1010', 'MECH', 1, true),
-  ('23CSE1011', 'Meera Deshmukh', 'NFC-23CSE1011', 'CSE', 3, true),
-  ('23ECE1012', 'Karthik Raja', 'NFC-23CSE1012', 'ECE', 2, true),
-  ('23IT1013', 'Divya Iyer', 'NFC-23CSE1013', 'IT', 3, true),
-  ('23CIV1014', 'Aman Khan', 'NFC-23CSE1014', 'CIVIL', 4, true),
-  ('23EEE1015', 'Pooja Bhat', 'NFC-23CSE1015', 'EEE', 2, true),
-  ('23CSE1016', 'Siddharth Joshi', 'NFC-23CSE1016', 'CSE', 1, true),
-  ('23ECE1017', 'Tanvi Sen', 'NFC-23CSE1017', 'ECE', 3, true),
-  ('23ME1018', 'Varun Rao', 'NFC-23CSE1018', 'MECH', 2, true),
-  ('23IT1019', 'Neha Das', 'NFC-23CSE1019', 'IT', 1, true),
-  ('23CIV1020', 'Yash Vardhan', 'NFC-23CSE1020', 'CIVIL', 4, true)
-ON CONFLICT (roll_number) DO NOTHING;
+  ('23AK1A3201', 'ARSHIYA K', '23AK1A3201', 'CSD', 4, true),
+  ('23AK1A3202', 'ARSHIYA KASALA', '23AK1A3202', 'CSD', 4, true),
+  ('23AK1A3203', 'BHARATH R', '23AK1A3203', 'CSD', 4, true),
+  ('23AK1A3204', 'CHAITHANYA K', '23AK1A3204', 'CSD', 4, true),
+  ('23AK1A3205', 'CHETHAN KUMAR REDDY M', '23AK1A3205', 'CSD', 4, true),
+  ('23AK1A3206', 'CYPRIAN A', '23AK1A3206', 'CSD', 4, true),
+  ('23AK1A3207', 'DILEEP K', '23AK1A3207', 'CSD', 4, true),
+  ('23AK1A3208', 'DINESH V', '23AK1A3208', 'CSD', 4, true),
+  ('23AK1A3209', 'DIVYA SRI S', '23AK1A3209', 'CSD', 4, true),
+  ('23AK1A3210', 'GIRISH K', '23AK1A3210', 'CSD', 4, true),
+  ('23AK1A3211', 'GOWTHAMI P', '23AK1A3211', 'CSD', 4, true),
+  ('23AK1A3212', 'GUNAMALIKA M', '23AK1A3212', 'CSD', 4, true),
+  ('23AK1A3213', 'HARI K', '23AK1A3213', 'CSD', 4, true),
+  ('23AK1A3214', 'HARSHA PRIYA S', '23AK1A3214', 'CSD', 4, true),
+  ('23AK1A3215', 'HEMA SAI M', '23AK1A3215', 'CSD', 4, true),
+  ('23AK1A3216', 'HITHESH M', '23AK1A3216', 'CSD', 4, true),
+  ('23AK1A3217', 'JOSHNA A', '23AK1A3217', 'CSD', 4, true),
+  ('23AK1A3218', 'Karthikeya R', '23AK1A3218', 'CSD', 4, true),
+  ('23AK1A3219', 'KAVITHA K', '23AK1A3219', 'CSD', 4, true),
+  ('23AK1A3220', 'KEERTHI R', '23AK1A3220', 'CSD', 4, true),
+  ('23AK1A3221', 'KEERTHI REDDY K', '23AK1A3221', 'CSD', 4, true),
+  ('23AK1A3222', 'KETHAN A', '23AK1A3222', 'CSD', 4, true),
+  ('23AK1A3223', 'LIKHETA A', '23AK1A3223', 'CSD', 4, true),
+  ('23AK1A3224', 'LIKITHA N', '23AK1A3224', 'CSD', 4, true),
+  ('23AK1A3225', 'MANOJ KUMAR K', '23AK1A3225', 'CSD', 4, true),
+  ('23AK1A3226', 'MOUNIKA K', '23AK1A3226', 'CSD', 4, true),
+  ('23AK1A3227', 'MOUNIKA P', '23AK1A3227', 'CSD', 4, true),
+  ('23AK1A3228', 'MUNIRAJA K', '23AK1A3228', 'CSD', 4, true),
+  ('23AK1A3229', 'NARAYANA P', '23AK1A3229', 'CSD', 4, true),
+  ('23AK1A3230', 'NAVEEN J', '23AK1A3230', 'CSD', 4, true),
+  ('23AK1A3231', 'NAZIYA BANU SHAIK', '23AK1A3231', 'CSD', 4, true),
+  ('23AK1A3232', 'PRAJWAL K', '23AK1A3232', 'CSD', 4, true),
+  ('23AK1A3233', 'PRASHANTH K', '23AK1A3233', 'CSD', 4, true),
+  ('23AK1A3234', 'PRATHIBHA E', '23AK1A3234', 'CSD', 4, true),
+  ('23AK1A3235', 'RAJASEKHAR T', '23AK1A3235', 'CSD', 4, true),
+  ('23AK1A3236', 'RAJU B', '23AK1A3236', 'CSD', 4, true),
+  ('23AK1A3237', 'RAKESH K', '23AK1A3237', 'CSD', 4, true),
+  ('23AK1A3238', 'RAVI TEJA K', '23AK1A3238', 'CSD', 4, true),
+  ('23AK1A3239', 'REVATHI V', '23AK1A3239', 'CSD', 4, true),
+  ('23AK1A3240', 'ROHITHA B', '23AK1A3240', 'CSD', 4, true),
+  ('23AK1A3241', 'RUPASREE J', '23AK1A3241', 'CSD', 4, true),
+  ('23AK1A3242', 'SALOMAN H', '23AK1A3242', 'CSD', 4, true),
+  ('23AK1A3243', 'SRAVANTHI D', '23AK1A3243', 'CSD', 4, true),
+  ('23AK1A3244', 'SREENADH K', '23AK1A3244', 'CSD', 4, true),
+  ('23AK1A3245', 'SUMA LATHA K', '23AK1A3245', 'CSD', 4, true),
+  ('23AK1A3246', 'SUMITH M', '23AK1A3246', 'CSD', 4, true),
+  ('23AK1A3247', 'SWATHI G', '23AK1A3247', 'CSD', 4, true),
+  ('23AK1A3248', 'SWETHA N', '23AK1A3248', 'CSD', 4, true),
+  ('23AK1A3249', 'TEJA KIRAN B', '23AK1A3249', 'CSD', 4, true),
+  ('23AK1A3250', 'THANUSREE P', '23AK1A3250', 'CSD', 4, true),
+  ('23AK1A3251', 'TRIVEEN KUMAR J', '23AK1A3251', 'CSD', 4, true),
+  ('23AK1A3252', 'VAISHNAVI C', '23AK1A3252', 'CSD', 4, true),
+  ('23AK1A3254', 'VASU P', '23AK1A3254', 'CSD', 4, true),
+  ('23AK1A3255', 'VINEELA G', '23AK1A3255', 'CSD', 4, true),
+  ('23AK1A3256', 'VINITHA T', '23AK1A3256', 'CSD', 4, true),
+  ('23AK1A3257', 'VINODH KUMAR S', '23AK1A3257', 'CSD', 4, true),
+  ('23AK1A3258', 'YASHASWINI S', '23AK1A3258', 'CSD', 4, true),
+  ('23AK1A3259', 'YOGA SAI KUMAR S', '23AK1A3259', 'CSD', 4, true),
+  ('23AK1A3260', 'YUGANDHAR K', '23AK1A3260', 'CSD', 4, true),
+  ('24AK5A3201', 'DWARAKANATH M', '24AK5A3201', 'CSD', 4, true),
+  ('24AK5A3202', 'GAYATHRI K', '24AK5A3202', 'CSD', 4, true),
+  ('24AK5A3203', 'LOKESH REDDY D', '24AK5A3203', 'CSD', 4, true),
+  ('24AK5A3204', 'MAMATHA K', '24AK5A3204', 'CSD', 4, true),
+  ('24AK5A3205', 'PHANEENDRA NAIDU G', '24AK5A3205', 'CSD', 4, true),
+  ('24AK5A3206', 'VEDANTHESHWAR M', '24AK5A3206', 'CSD', 4, true)
+ON CONFLICT (roll_number) DO UPDATE SET
+  name = EXCLUDED.name,
+  card_id = EXCLUDED.card_id,
+  department = EXCLUDED.department,
+  year = EXCLUDED.year,
+  active = EXCLUDED.active;
 
--- 7. Seed Sample Meal Records (past days & today)
-DO $$
-DECLARE
-  rec RECORD;
-  today_date DATE := CURRENT_DATE;
-  yesterday_date DATE := CURRENT_DATE - INTERVAL '1 day';
-  prev_date DATE := CURRENT_DATE - INTERVAL '2 days';
-  idx INTEGER := 0;
-BEGIN
-  FOR rec IN SELECT id FROM students ORDER BY id ASC LOOP
-    idx := idx + 1;
-    
-    -- Two days ago: ~85% attendance
-    IF idx % 10 != 0 THEN
-      INSERT INTO meal_records (student_id, meal_type, meal_date, scanned_at)
-      VALUES 
-        (rec.id, 'Breakfast', prev_date, (prev_date::text || ' 08:15:00+00')::TIMESTAMPTZ),
-        (rec.id, 'Lunch', prev_date, (prev_date::text || ' 13:20:00+00')::TIMESTAMPTZ),
-        (rec.id, 'Dinner', prev_date, (prev_date::text || ' 20:30:00+00')::TIMESTAMPTZ)
-      ON CONFLICT (student_id, meal_type, meal_date) DO NOTHING;
-    END IF;
-
-    -- Yesterday: ~85% attendance
-    IF idx % 8 != 0 THEN
-      INSERT INTO meal_records (student_id, meal_type, meal_date, scanned_at)
-      VALUES 
-        (rec.id, 'Breakfast', yesterday_date, (yesterday_date::text || ' 08:25:00+00')::TIMESTAMPTZ),
-        (rec.id, 'Lunch', yesterday_date, (yesterday_date::text || ' 13:15:00+00')::TIMESTAMPTZ),
-        (rec.id, 'Dinner', yesterday_date, (yesterday_date::text || ' 20:10:00+00')::TIMESTAMPTZ)
-      ON CONFLICT (student_id, meal_type, meal_date) DO NOTHING;
-    END IF;
-
-    -- Today: Breakfast (18), Lunch (15), Snack 1 (14), Dinner (10)
-    IF idx <= 18 THEN
-      INSERT INTO meal_records (student_id, meal_type, meal_date, scanned_at)
-      VALUES (rec.id, 'Breakfast', today_date, (today_date::text || ' 08:20:00+00')::TIMESTAMPTZ)
-      ON CONFLICT (student_id, meal_type, meal_date) DO NOTHING;
-    END IF;
-
-    IF idx <= 15 THEN
-      INSERT INTO meal_records (student_id, meal_type, meal_date, scanned_at)
-      VALUES (rec.id, 'Lunch', today_date, (today_date::text || ' 13:10:00+00')::TIMESTAMPTZ)
-      ON CONFLICT (student_id, meal_type, meal_date) DO NOTHING;
-    END IF;
-
-    IF idx <= 14 THEN
-      INSERT INTO meal_records (student_id, meal_type, meal_date, scanned_at)
-      VALUES (rec.id, 'Snack 1', today_date, (today_date::text || ' 11:00:00+00')::TIMESTAMPTZ)
-      ON CONFLICT (student_id, meal_type, meal_date) DO NOTHING;
-    END IF;
-
-    IF idx <= 10 THEN
-      INSERT INTO meal_records (student_id, meal_type, meal_date, scanned_at)
-      VALUES (rec.id, 'Dinner', today_date, (today_date::text || ' 20:15:00+00')::TIMESTAMPTZ)
-      ON CONFLICT (student_id, meal_type, meal_date) DO NOTHING;
-    END IF;
-  END LOOP;
-END $$;
+-- 7. Meal Records start completely clean (0 records) for the NEXUS Fest POC.

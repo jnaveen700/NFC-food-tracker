@@ -11,13 +11,13 @@ interface DesktopSidebarProps {
 export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   activeTab,
   onSelectTab,
-  messName = 'Food Token Tracker'
+  messName = 'Food Tracker'
 }) => {
   const menuItems = [
-    { id: 'scanner' as TabType, label: 'Token Scanner', icon: Scan, badge: 'NFC' },
-    { id: 'history' as TabType, label: 'Token History', icon: Clock },
+    { id: 'scanner' as TabType, label: 'Scanner', icon: Scan, badge: 'NFC' },
+    { id: 'history' as TabType, label: 'Collection History', icon: Clock },
     { id: 'students' as TabType, label: 'Participants', icon: Users },
-    { id: 'dashboard' as TabType, label: 'Token Analytics', icon: LayoutDashboard },
+    { id: 'dashboard' as TabType, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'settings' as TabType, label: 'Settings', icon: Settings },
   ];
 

@@ -57,18 +57,18 @@ export const handler: Handler = async (event) => {
     }
 
     // Build CSV content
-    let csv = 'Record ID,Roll Number,Student Name,Department,Year,Meal Type,Meal Date,Scanned At,Time\n';
+    let csv = 'Record ID,Roll Number,Participant Name,Department,Year,Session,Date,Scanned At,Time\n';
     for (const r of (rows || [])) {
       const student = (r as any).students || {};
       const timeStr = formatTime12H(r.scanned_at);
-      csv += `"${r.id}","${student.roll_number || ''}","${student.name || ''}","${student.department || ''}","${student.year || ''}","${r.meal_type}","${r.meal_date}","${r.scanned_at}","${timeStr}"\n`;
+      csv += `"${r.id}","${student.roll_number || ''}","${student.name || ''}","${student.department || 'CSD'}","${student.year || 4}","${r.meal_type}","${r.meal_date}","${r.scanned_at}","${timeStr}"\n`;
     }
 
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename=mess_attendance_${dateStr}.csv`,
+        'Content-Disposition': `attachment; filename=nexus_collections_${dateStr}.csv`,
         ...CORS_HEADERS
       },
       body: csv

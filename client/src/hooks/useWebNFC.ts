@@ -52,9 +52,9 @@ export function useWebNFC({ onScanSuccess, onScanError }: UseWebNFCProps) {
       });
 
       ndef.addEventListener('reading', ({ message, serialNumber }: any) => {
-        let detectedId = serialNumber ? `NFC-${serialNumber.replace(/:/g, '').toUpperCase()}` : '';
+        let detectedId = serialNumber ? serialNumber.replace(/:/g, '').toUpperCase() : '';
 
-        // Check NDEF records if available
+        // Check NDEF plain text record
         if (message && message.records && message.records.length > 0) {
           for (const record of message.records) {
             if (record.recordType === 'text') {
@@ -73,7 +73,7 @@ export function useWebNFC({ onScanSuccess, onScanError }: UseWebNFCProps) {
         } else if (serialNumber) {
           onScanSuccess(serialNumber);
         } else {
-          onScanSuccess('NFC-UNKNOWN');
+          onScanSuccess('UNKNOWN');
         }
       });
 

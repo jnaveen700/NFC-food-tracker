@@ -12,13 +12,22 @@ interface TopHeaderProps {
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
   activeMeal,
-  messName = 'NEXUS Food Token Tracker',
+  messName = 'NEXUS Food Tracker',
   isOnline = true,
   onOpenMealSelector,
   onOpenDemoScanner
 }) => {
   // Format user-facing token label
-  const tokenLabel = activeMeal === 'Snack 1' ? 'Snack Token' : activeMeal === 'Dinner' ? 'Full Meal Token' : `${activeMeal} Token`;
+  const formatTokenLabel = (meal: string) => {
+    if (meal === 'Day 1 Snack') return 'Day 1 • Snack Token';
+    if (meal === 'Day 1 Meal') return 'Day 1 • Meal Token';
+    if (meal === 'Day 2 Snack') return 'Day 2 • Snack Token';
+    if (meal === 'Day 3 Snack') return 'Day 3 • Snack Token';
+    if (meal === 'Snack 1') return 'Snack Token';
+    if (meal === 'Dinner') return 'Meal Token';
+    return `${meal} Token`;
+  };
+  const tokenLabel = formatTokenLabel(activeMeal);
 
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-slate-200 px-4 py-3 pt-safe shadow-sm">

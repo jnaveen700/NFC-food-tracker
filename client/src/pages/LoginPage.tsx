@@ -78,7 +78,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             isLoading={isLoading}
             icon={<ArrowRight className="w-5 h-5" />}
           >
-            Sign In to Mess Portal
+            Sign In to NEXUS Portal
           </Button>
 
           <div className="pt-2 text-center">

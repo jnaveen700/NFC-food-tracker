@@ -48,16 +48,17 @@ export const api = {
   },
 
   // Core Scan
-  scanCard: async (cardId: string, mealTypeOverride?: MealType): Promise<ScanResponse> => {
+  scanCard: async (cardId: string, session?: string): Promise<ScanResponse> => {
     return fetchJson<ScanResponse>('/scan', {
       method: 'POST',
-      body: JSON.stringify({ cardId, mealTypeOverride })
+      body: JSON.stringify({ cardId, session, mealTypeOverride: session })
     });
   },
 
   // Dashboard
-  getDashboard: async (): Promise<DashboardData> => {
-    return fetchJson<DashboardData>('/dashboard');
+  getDashboard: async (session?: string): Promise<DashboardData> => {
+    const query = session ? `?session=${encodeURIComponent(session)}` : '';
+    return fetchJson<DashboardData>(`/dashboard${query}`);
   },
 
   // Students
@@ -102,7 +103,7 @@ export const api = {
   },
 
   // Meals & History
-  getMeals: async (params?: { date?: string; meal_type?: string; search?: string; limit?: number; offset?: number }): Promise<{
+  getMeals: async (params?: { date?: string; meal_type?: string; session?: string; search?: string; limit?: number; offset?: number }): Promise<{
     records: MealRecord[];
     total: number;
     limit: number;
@@ -112,18 +113,20 @@ export const api = {
   }> => {
     const query = new URLSearchParams();
     if (params?.date) query.append('date', params.date);
-    if (params?.meal_type) query.append('meal_type', params.meal_type);
+    const sess = params?.session || params?.meal_type;
+    if (sess) query.append('meal_type', sess);
     if (params?.search) query.append('search', params.search);
     if (params?.limit) query.append('limit', String(params.limit));
     if (params?.offset) query.append('offset', String(params.offset));
     return fetchJson(`/meals?${query.toString()}`);
   },
 
-  deleteMealRecord: async (params: { recordId?: number; studentId?: number; mealType?: string; mealDate?: string }): Promise<{ success: boolean; message: string }> => {
+  deleteMealRecord: async (params: { recordId?: number; studentId?: number; mealType?: string; session?: string; mealDate?: string }): Promise<{ success: boolean; message: string }> => {
     const query = new URLSearchParams();
     if (params.recordId) query.append('record_id', String(params.recordId));
     if (params.studentId) query.append('student_id', String(params.studentId));
-    if (params.mealType) query.append('meal_type', params.mealType);
+    const sess = params.session || params.mealType;
+    if (sess) query.append('meal_type', sess);
     if (params.mealDate) query.append('meal_date', params.mealDate);
     return fetchJson<{ success: boolean; message: string }>(`/meals?${query.toString()}`, {
       method: 'DELETE'
