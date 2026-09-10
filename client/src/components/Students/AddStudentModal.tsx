@@ -39,8 +39,8 @@ export const AddStudentModal: React.FC<AddStudentModalProps> = ({
       setName('');
       setRollNumber('');
       setCardId(initialCardId || '');
-      setDepartment('CSE');
-      setYear(3);
+      setDepartment('CSD');
+      setYear(4);
     }
     setError('');
   }, [editStudent, initialCardId, isOpen]);

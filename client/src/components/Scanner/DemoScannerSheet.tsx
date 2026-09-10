@@ -23,9 +23,6 @@ export const DemoScannerSheet: React.FC<DemoScannerSheetProps> = ({
   const demoCards = [
     { label: 'Karthikeya R (CSD 4th Yr)', rollNumber: '23AK1A3218' },
     { label: 'ARSHIYA K (CSD 4th Yr)', rollNumber: '23AK1A3201' },
-    { label: 'NIREKESHAN KUMAR B (AIML 2nd Yr)', rollNumber: '23AK1A3357' },
-    { label: 'HARSHAWARDHAN M (AIML 2nd Yr)', rollNumber: '23AK1A33A7' },
-    { label: 'LOHITHA Y (AIML 2nd Yr)', rollNumber: '24AK5A3306' },
     { label: 'Unregistered NFC Card', rollNumber: '99AK9A9999' }
   ];
 
