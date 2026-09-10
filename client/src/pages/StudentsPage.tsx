@@ -89,7 +89,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
     fetchStudents();
   };
 
-  const departments = ['ALL', 'CSD', 'CSE', 'ECE', 'MECH', 'EEE', 'CIVIL', 'IT'];
+  const departments = ['ALL', 'CSD', 'AIML'];
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)] max-w-2xl mx-auto px-4 py-3 pb-24">

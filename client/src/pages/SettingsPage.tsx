@@ -185,7 +185,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ user, onLogout }) =>
               Reset & Reseed Sample Data
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Resets database and seeds official 65 NEXUS participants with 0 collection records.
+              Resets database and seeds official 126 NEXUS participants (65 CSD + 61 AIML) with 0 collection records.
             </p>
           </div>
           <Button

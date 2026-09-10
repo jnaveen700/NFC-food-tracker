@@ -39,7 +39,7 @@ export const DashboardPage: React.FC = () => {
     );
   }
 
-  const totalParticipants = data.totalStudents || 65;
+  const totalParticipants = data.totalStudents || 126;
 
   // Exact session collections from backend response
   const day1SnackCount = data.dayCollections?.day1?.snack ?? 0;

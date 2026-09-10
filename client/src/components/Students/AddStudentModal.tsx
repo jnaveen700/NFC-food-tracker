@@ -119,13 +119,8 @@ export const AddStudentModal: React.FC<AddStudentModalProps> = ({
               onChange={(e) => setDepartment(e.target.value)}
               className="w-full h-12 px-3 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-brand-500 focus:outline-none"
             >
-              <option value="CSE">CSE</option>
               <option value="CSD">CSD</option>
-              <option value="ECE">ECE</option>
-              <option value="EEE">EEE</option>
-              <option value="IT">IT</option>
-              <option value="MECH">MECH</option>
-              <option value="CIVIL">CIVIL</option>
+              <option value="AIML">AIML</option>
             </select>
           </div>
 

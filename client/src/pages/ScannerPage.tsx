@@ -176,7 +176,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
     return 0;
   };
 
-  const totalParticipants = dashboardData?.totalStudents || 65;
+  const totalParticipants = dashboardData?.totalStudents || 126;
   const currentCount = getSessionCount();
   const currentPct = totalParticipants > 0 ? Number(((currentCount / totalParticipants) * 100).toFixed(2)) : 0;
 
