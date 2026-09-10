@@ -13,6 +13,15 @@ export function useWebNFC({ onScanSuccess, onScanError }: UseWebNFCProps) {
   const ndefReaderRef = useRef<any>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  // Keep references to latest callbacks to avoid stale closures during ongoing NFC scans
+  const onScanSuccessRef = useRef(onScanSuccess);
+  const onScanErrorRef = useRef(onScanError);
+
+  useEffect(() => {
+    onScanSuccessRef.current = onScanSuccess;
+    onScanErrorRef.current = onScanError;
+  }, [onScanSuccess, onScanError]);
+
   useEffect(() => {
     // Check Web NFC support in browser
     if ('NDEFReader' in window) {
@@ -26,7 +35,7 @@ export function useWebNFC({ onScanSuccess, onScanError }: UseWebNFCProps) {
     if (!('NDEFReader' in window)) {
       const err = "NFC isn't supported on this device/browser.";
       setErrorMessage(err);
-      if (onScanError) onScanError(err);
+      if (onScanErrorRef.current) onScanErrorRef.current(err);
       return false;
     }
 
@@ -48,7 +57,7 @@ export function useWebNFC({ onScanSuccess, onScanError }: UseWebNFCProps) {
       ndef.addEventListener('readingerror', () => {
         const err = 'Failed to read NFC tag. Please try again.';
         setErrorMessage(err);
-        if (onScanError) onScanError(err);
+        if (onScanErrorRef.current) onScanErrorRef.current(err);
       });
 
       ndef.addEventListener('reading', ({ message, serialNumber }: any) => {
@@ -69,11 +78,11 @@ export function useWebNFC({ onScanSuccess, onScanError }: UseWebNFCProps) {
         }
 
         if (detectedId) {
-          onScanSuccess(detectedId);
+          if (onScanSuccessRef.current) onScanSuccessRef.current(detectedId);
         } else if (serialNumber) {
-          onScanSuccess(serialNumber);
+          if (onScanSuccessRef.current) onScanSuccessRef.current(serialNumber);
         } else {
-          onScanSuccess('UNKNOWN');
+          if (onScanSuccessRef.current) onScanSuccessRef.current('UNKNOWN');
         }
       });
 
@@ -91,10 +100,10 @@ export function useWebNFC({ onScanSuccess, onScanError }: UseWebNFCProps) {
 
       setErrorMessage(userMsg);
       setIsScanning(false);
-      if (onScanError) onScanError(userMsg);
+      if (onScanErrorRef.current) onScanErrorRef.current(userMsg);
       return false;
     }
-  }, [onScanSuccess, onScanError]);
+  }, []);
 
   const stopScanning = useCallback(() => {
     if (abortControllerRef.current) {

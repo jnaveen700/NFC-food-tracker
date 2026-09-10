@@ -13,18 +13,44 @@ import { DailySummaryCard } from '../components/Scanner/DailySummaryCard';
 import { Button } from '../components/UI/Button';
 
 interface ScannerPageProps {
-  activeMeal?: string;
-  onChangeActiveMeal?: (meal: string) => void;
+  activeDay?: EventDay;
+  setActiveDay?: (day: EventDay) => void;
+  activeSessionType?: 'Snack' | 'Meal';
+  setActiveSessionType?: (type: 'Snack' | 'Meal') => void;
   onNavigateToTab?: (tab: any) => void;
   onAddStudentWithCard?: (cardId: string) => void;
 }
 
 export const ScannerPage: React.FC<ScannerPageProps> = ({
+  activeDay: propActiveDay,
+  setActiveDay: propSetActiveDay,
+  activeSessionType: propActiveSessionType,
+  setActiveSessionType: propSetActiveSessionType,
   onNavigateToTab,
   onAddStudentWithCard
 }) => {
-  const [activeDay, setActiveDay] = useState<EventDay>('Day 1');
-  const [activeSessionType, setActiveSessionType] = useState<'Snack' | 'Meal'>('Snack');
+  // Local fallback state if props not provided
+  const [localActiveDay, setLocalActiveDay] = useState<EventDay>('Day 1');
+  const [localActiveSessionType, setLocalActiveSessionType] = useState<'Snack' | 'Meal'>('Snack');
+
+  const activeDay = propActiveDay ?? localActiveDay;
+  const activeSessionType = propActiveSessionType ?? localActiveSessionType;
+
+  const setActiveDay = (day: EventDay) => {
+    if (propSetActiveDay) propSetActiveDay(day);
+    else setLocalActiveDay(day);
+
+    if (day !== 'Day 1' && activeSessionType === 'Meal') {
+      if (propSetActiveSessionType) propSetActiveSessionType('Snack');
+      else setLocalActiveSessionType('Snack');
+    }
+  };
+
+  const setActiveSessionType = (type: 'Snack' | 'Meal') => {
+    if (propSetActiveSessionType) propSetActiveSessionType(type);
+    else setLocalActiveSessionType(type);
+  };
+
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [scanResult, setScanResult] = useState<ScanResponse | null>(null);
   const [isDemoSheetOpen, setIsDemoSheetOpen] = useState(false);
@@ -45,9 +71,6 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
 
   const handleSelectDay = (day: EventDay) => {
     setActiveDay(day);
-    if (day !== 'Day 1' && activeSessionType === 'Meal') {
-      setActiveSessionType('Snack');
-    }
   };
 
   // Load latest stats for the active session
@@ -77,6 +100,8 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
       } else if (response.status === 'already_recorded') {
         playDuplicate();
       } else if (response.status === 'not_found' || response.status === 'inactive') {
+        playUnknown();
+      } else if (response.status === 'error') {
         playUnknown();
       }
 
@@ -156,65 +181,90 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({
   const currentPct = totalParticipants > 0 ? Number(((currentCount / totalParticipants) * 100).toFixed(2)) : 0;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] max-w-xl mx-auto px-4 py-3 pb-24 bg-slate-50">
-      {/* Top Event Day & Session Selector */}
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] max-w-xl mx-auto px-4 py-3 pb-28 bg-slate-50">
+      {/* Top Event Day & Session Selector - Specially designed for mobile finger taps */}
       <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm space-y-3 mb-3">
-        {/* Event Day Selector */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-brand-600" />
-            NEXUS Schedule
-          </span>
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
-            {days.map((d) => (
-              <button
-                key={d}
-                onClick={() => handleSelectDay(d)}
-                className={`px-3 py-1.5 text-xs font-extrabold rounded-lg transition-all ${
-                  activeDay === d
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {d}
-              </button>
-            ))}
+        {/* DAY SECTION */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-brand-600" />
+              NEXUS DAY
+            </span>
+            <span className="text-[11px] font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
+              {activeDay}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {days.map((d) => {
+              const isSelected = activeDay === d;
+              return (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => handleSelectDay(d)}
+                  className={`
+                    h-12 min-h-[48px] rounded-2xl font-black text-sm transition-all duration-150 flex items-center justify-center select-none active:scale-95 shadow-sm
+                    ${isSelected
+                      ? 'bg-slate-900 text-white ring-2 ring-slate-900 shadow-slate-900/20'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                    }
+                  `}
+                >
+                  {d}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Sessions for selected day */}
-        <div>
-          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
-            {activeDay === 'Day 1' ? 'Day 1 Sessions (Snack & Meal)' : `${activeDay} Session (Snack)`}
+        {/* SESSION SECTION (Dependent on Selected Day) */}
+        <div className="pt-2 border-t border-slate-100">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+              {activeDay} SESSION
+            </span>
+            <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              {activeSessionType}
+            </span>
           </div>
-          <div className="flex items-center gap-2">
-            {availableSessionTypes.map((type) => (
-              <button
-                key={type}
-                onClick={() => setActiveSessionType(type)}
-                className={`flex-1 py-2 px-3 rounded-xl text-xs font-extrabold transition-all shadow-sm ${
-                  activeSessionType === type
-                    ? 'bg-brand-500 text-white shadow-brand-500/20'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                }`}
-              >
-                {type}
-              </button>
-            ))}
+          <div className="grid grid-cols-2 gap-2">
+            {availableSessionTypes.map((type) => {
+              const isSelected = activeSessionType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setActiveSessionType(type)}
+                  className={`
+                    h-12 min-h-[48px] rounded-2xl font-black text-sm transition-all duration-150 flex items-center justify-center select-none active:scale-95 shadow-sm
+                    ${availableSessionTypes.length === 1 ? 'col-span-2' : ''}
+                    ${isSelected
+                      ? 'bg-brand-500 text-white ring-2 ring-brand-500 shadow-brand-500/25'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'
+                    }
+                  `}
+                >
+                  {type.toUpperCase()}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Prominent Session Status Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl px-4 py-2.5 shadow-xs flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-black text-slate-900 tracking-wider">
-            NEXUS • {activeDay.toUpperCase()} • {activeSessionType.toUpperCase()}
-          </span>
+      <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3 shadow-xs flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <div className="truncate">
+            <span className="text-xs font-black text-slate-900 tracking-wider">
+              NEXUS • {activeDay.toUpperCase()} • {activeSessionType.toUpperCase()}
+            </span>
+          </div>
         </div>
-        <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-          Ready
+        <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">
+          Ready to Scan
         </span>
       </div>
 

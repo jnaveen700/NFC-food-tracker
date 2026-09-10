@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MealType, User } from './types';
+import { MealType, User, EventDay } from './types';
 import { TabType, MobileBottomNav } from './components/Layout/MobileBottomNav';
 import { DesktopSidebar } from './components/Layout/DesktopSidebar';
 import { TopHeader } from './components/Layout/TopHeader';
@@ -21,8 +21,11 @@ export const App: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<TabType>('scanner');
   
-  // Active meal default
-  const [activeMeal, setActiveMeal] = useState<MealType>('Snack 1');
+  // Persistent NEXUS session state
+  const [activeDay, setActiveDay] = useState<EventDay>('Day 1');
+  const [activeSessionType, setActiveSessionType] = useState<'Snack' | 'Meal'>('Snack');
+
+  const currentSession = `${activeDay} ${activeSessionType}`;
 
   const [initialCardForAdd, setInitialCardForAdd] = useState<string | undefined>(undefined);
   const [isDemoSheetOpen, setIsDemoSheetOpen] = useState(false);
@@ -60,7 +63,7 @@ export const App: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         {/* Top Header */}
         <TopHeader
-          activeMeal={activeMeal}
+          activeMeal={currentSession}
           onOpenMealSelector={() => setActiveTab('scanner')}
           onOpenDemoScanner={() => setIsDemoSheetOpen(true)}
         />
@@ -69,8 +72,10 @@ export const App: React.FC = () => {
         <main className="flex-1 bg-slate-50">
           {activeTab === 'scanner' && (
             <ScannerPage
-              activeMeal={activeMeal}
-              onChangeActiveMeal={(meal) => setActiveMeal(meal)}
+              activeDay={activeDay}
+              setActiveDay={setActiveDay}
+              activeSessionType={activeSessionType}
+              setActiveSessionType={setActiveSessionType}
               onNavigateToTab={(tab) => setActiveTab(tab)}
               onAddStudentWithCard={handleAddStudentWithCard}
             />
@@ -107,7 +112,7 @@ export const App: React.FC = () => {
           setIsDemoSheetOpen(false);
           setActiveTab('scanner');
           try {
-            await api.scanCard(cardId, activeMeal);
+            await api.scanCard(cardId, currentSession);
           } catch (err) {
             console.error(err);
           }
